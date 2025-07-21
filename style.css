@@ -271,7 +271,7 @@ h1 {
     gap: 1rem;
     margin-top: 1.5rem;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-around;
 }
 
 .pulse-btn {
