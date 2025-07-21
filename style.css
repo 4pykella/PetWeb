@@ -287,6 +287,11 @@ h1 {
     animation: pulse 2s infinite;
 }
 
+a
+{
+    text-decoration: none;
+}
+
 @keyframes pulse {
     0% { box-shadow: 0 0 0 0 rgba(88, 166, 255, 0.7); }
     70% { box-shadow: 0 0 0 10px rgba(88, 166, 255, 0); }
