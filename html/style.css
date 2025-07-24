@@ -251,7 +251,7 @@ h1 {
 .tech-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
-    border-color: rgba(88, 166, 255, 0.3);
+    border-color: #1a7d56;
 }
 
 .tech-card img {
@@ -296,14 +296,14 @@ a
 }
 
 @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(88, 166, 255, 0.7); }
+    0% { box-shadow: 0 0 0 0 #34c78a; }
     70% { box-shadow: 0 0 0 10px rgba(88, 166, 255, 0); }
     100% { box-shadow: 0 0 0 0 rgba(88, 166, 255, 0); }
 }
 
 .pulse-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(88, 166, 255, 0.4);
+    box-shadow: 0 5px 15px #34c78a;
 }
 
 @media (max-width: 768px) {
