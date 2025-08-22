@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личная вики</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+    <div class="wiki-container">
+        <!-- Боковая панель с деревом -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Chep-wiki</h2>
+                <button class="theme-btn" id="theme-toggle">🌙</button>
+                <button class="edit-btn" id="edit-toggle"><i class="fas fa-edit"></i></button>
+            </div>
+            <input type="text" class="search-box" placeholder="Поиск..." id="search-input">
+            <ul class="tree" id="wiki-tree">
+                <!-- Дерево будет сгенерировано JS -->
+            </ul>
+        </div>
+
+        <!-- Основное содержимое -->
+        <div class="content">
+            <div class="article">
+                <h1 id="article-title">Добро пожаловать в мою кривую вики</h1>
+                <div class="article-content" id="article-content">
+                    <p>Здесь собраны мои статьи по тем технология что я пользуюсь. Своего рода конфлюенс из мира бедных.
+                        Не суди строга, проходи не задерживайся.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для редактирования -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Редактирование вики</h2>
+            <div id="auth-section">
+                <p>Для редактирования введите пароль:</p>
+                <input type="password" id="admin-password" placeholder="Пароль">
+                <button id="auth-btn">Авторизоваться</button>
+            </div>
+            <div id="edit-section" style="display: none;">
+                <h3>Добавить новую статью</h3>
+                <input type="text" id="new-article-path" placeholder="Путь (например: Программирование/JavaScript/ES6)">
+                <textarea id="new-article-content" placeholder="Содержимое статьи (Markdown)"></textarea>
+                <button id="add-article-btn">Добавить статью</button>
+                <button id="save-wiki-btn">Сохранить вики</button>
+                <div id="edit-status"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+    <style>
+        /* Стили для модального окна */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: var(--bg-color);
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            width: 80%;
+            max-width: 600px;
+            border-radius: 5px;
+        }
+
+        .close {
+            color: var(--text-color);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: var(--accent-color);
+        }
+
+        #edit-section textarea {
+            width: 100%;
+            min-height: 200px;
+            margin: 10px 0;
+            padding: 10px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        #edit-section input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+        }
+
+        #edit-section button {
+            padding: 8px 15px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 1.2em;
+            margin-left: 10px;
+        }
+    </style>
+</body>
+
+</html>

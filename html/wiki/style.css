@@ -1,0 +1,447 @@
+:root {
+    /* Новая темная тема */
+    --bg-primary: #0f1a1e;
+    --bg-secondary: #15262b;
+    --text-primary: #f0e2a7;
+    --text-secondary: #8a9ea8;
+    --accent: #259c71;
+    --accent-light: #34c78a;
+    --neon: #3ae0a6;
+    --border-color: #2a3b44;
+    --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    --transition: all 0.3s ease-in-out;
+}
+
+[data-theme="light"] {
+    --bg-primary: #f5f7f8;
+    --bg-secondary: #e1e6e9;
+    --text-primary: #2a3b44;
+    --text-secondary: #4d6a7a;
+    --accent: #1a7d56;
+    --accent-light: #259c71;
+    --neon: #1da876;
+    --border-color: #d1d9dd;
+    --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    transition: var(--transition);
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+    min-height: 100vh;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+.bg-pattern {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 25% 25%, 
+            rgba(88, 166, 255, 0.1) 0%, 
+            transparent 50%) no-repeat,
+        var(--bg-primary);
+    z-index: -1;
+    transition: var(--transition);
+}
+
+/* Основная структура вики */
+.wiki-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* Боковая панель (дерево) */
+.sidebar {
+    width: 300px;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
+    padding: 1.5rem;
+    overflow-y: auto;
+    transition: var(--transition);
+    position: relative;
+    z-index: 10;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-header h2 {
+    font-size: 1.5rem;
+    color: var(--accent);
+}
+
+.search-box {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1.5rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.search-box:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(37, 156, 113, 0.2);
+}
+
+.tree {
+    list-style: none;
+    padding-left: 0;
+}
+
+.tree-item {
+    padding: 0.75rem 0;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 1.05rem;
+    border-radius: 6px;
+    padding-left: 0.5rem;
+}
+
+.tree-item:hover {
+    background: rgba(37, 156, 113, 0.1);
+    color: var(--accent-light);
+}
+
+.tree-item.has-children::before {
+    content: '📁 ';
+    font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
+}
+
+.tree-item.no-children::before {
+    content: '📄 ';
+    font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
+}
+
+.tree-item.active {
+    color: var(--accent-light);
+    font-weight: 600;
+}
+
+.tree-children {
+    margin-left: 1.25rem;
+    display: none;
+    border-left: 1px dashed var(--border-color);
+    padding-left: 0.5rem;
+}
+
+.tree-item.active > .tree-children {
+    display: block;
+}
+
+/* Основное содержимое */
+.content {
+    flex: 1;
+    padding: 2.5rem;
+    overflow-y: auto;
+    background: var(--bg-primary);
+    position: relative;
+}
+
+.article {
+    max-width: 800px;
+    margin: 0 auto;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.article h1 {
+    margin-bottom: 1.5rem;
+    color: var(--accent);
+    font-size: 2.2rem;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.article h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+}
+
+.article-content {
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.article-content p {
+    margin-bottom: 1.5rem;
+}
+
+.article-content code {
+    font-family: 'Fira Code', monospace;
+    background: var(--bg-secondary);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: var(--neon);
+}
+
+.article-content pre {
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    box-shadow: var(--card-shadow);
+}
+
+.article-content pre code {
+    background: transparent;
+    padding: 0;
+    color: var(--text-primary);
+}
+
+.article-content ul, 
+.article-content ol {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+}
+
+.article-content a {
+    color: var(--accent-light);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--accent);
+    transition: var(--transition);
+}
+
+.article-content a:hover {
+    color: var(--neon);
+    border-bottom-color: var(--neon);
+}
+
+/* Кнопка темы */
+.theme-btn {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.theme-btn:hover {
+    transform: scale(1.1);
+    background: var(--accent);
+    color: white;
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 250px;
+        padding: 1rem;
+    }
+    
+    .content {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .wiki-container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        max-height: 300px;
+    }
+    
+    .content {
+        padding: 1.5rem 1rem;
+    }
+    
+    .article h1 {
+        font-size: 1.8rem;
+    }
+}
+
+/* Дополнительные элементы из оригинального стиля */
+.card {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem auto;
+    max-width: 800px;
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+}
+
+.glow {
+    position: relative;
+}
+
+.glow::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 12px;
+    background: linear-gradient(45deg, var(--accent), transparent);
+    opacity: 0.1;
+    z-index: -1;
+    transition: var(--transition);
+}
+
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.tech-card {
+    background: var(--bg-primary);
+    border-radius: 8px;
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(88, 166, 255, 0.1);
+}
+
+.tech-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+    border-color: var(--accent);
+}
+
+.pulse-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--accent);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 var(--accent-light); }
+    70% { box-shadow: 0 0 0 10px rgba(52, 199, 138, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(52, 199, 138, 0); }
+}
+
+.pulse-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px var(--accent-light);
+}
+
+
+.markdown {
+    line-height: 1.6;
+    font-size: 1.1rem;
+}
+
+.markdown h1 {
+    color: var(--accent);
+    font-size: 2rem;
+    margin: 1.5rem 0 1rem;
+}
+
+.markdown h2 {
+    font-size: 1.7rem;
+    margin: 1.3rem 0 0.8rem;
+}
+
+.markdown h3 {
+    font-size: 1.4rem;
+    margin: 1.1rem 0 0.6rem;
+}
+
+.markdown pre {
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+.markdown code {
+    font-family: 'Fira Code', monospace;
+    background: rgba(0,0,0,0.1);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+}
+
+.markdown ul, 
+.markdown ol {
+    margin: 1rem 0;
+    padding-left: 2rem;
+}
+
+.markdown li {
+    margin-bottom: 0.5rem;
+}
+
+.markdown a {
+    color: var(--accent-light);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--accent);
+}
+
+.markdown a:hover {
+    color: var(--neon);
+    border-bottom-color: var(--neon);
+}
