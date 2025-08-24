@@ -39,7 +39,7 @@ body {
 }
 
 /* Wiki layout */
-.wiki-container {
+.miki-container {
   display: flex;
   height: 100vh;
 }
