@@ -305,32 +305,6 @@ a
     text-decoration: none;
 }
 
-#wiki-toggle {
-    position: static; /* Убрано fixed позиционирование */
-    margin: 0; /* Убраны отступы */
-    order: 2; /* Кнопка вики будет слева от кнопки темы */
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-/* Остальные стили остаются без изменений */
-#wiki-toggle:hover {
-    transform: scale(1.1);
-    background: var(--accent);
-    color: white;
-}
-
 @keyframes pulse {
     0% { box-shadow: 0 0 0 0 #34c78a; }
     70% { box-shadow: 0 0 0 10px rgba(88, 166, 255, 0); }
@@ -359,11 +333,5 @@ a
         right: 10px;
     }
     
-    #wiki-toggle, 
-    .theme-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
-    }
 }
 
