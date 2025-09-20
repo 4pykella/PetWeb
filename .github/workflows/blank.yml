@@ -21,6 +21,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
           script: |
+            cd PetWeb
             git config --global user.email ${{ secrets.EMAIL }}
             git config --global user.name ${{ secrets.USERNAME }}
             git pull origin main
