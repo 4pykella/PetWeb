@@ -3,20 +3,25 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Miki</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Добавляем highlight.js для подсветки синтаксиса -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 </head>
 
 <body>
     <div class="header-buttons">
         <button id="theme-toggle" class="theme-btn">🌙</button>
+        <button href="https://www.chepykella.ru" id="MAIN" class="theme-btn">◀️</button>
     </div>
     <div class="miki-container">
         <aside class="sidebar">
             <h2>Miki</h2>
             <input type="text" id="search" placeholder="Поиск..."
-                style="width:100%; padding:5px; margin-bottom:10px; border-radius:4px; border:1px solid var(--text-secondary); background: var(--bg-primary); color: var(--text-primary);">
+                style="width: auto; padding:5px; margin-bottom:10px; border-radius:4px; border:1px solid var(--text-secondary); background: var(--bg-primary); color: var(--text-primary);">
             <ul id="nav"></ul>
         </aside>
 
@@ -26,7 +31,21 @@
     </div>
     <div class="bg-pattern"></div>
     <script src="app.js"></script>
+    <script>
+        // Добавляем подсветку синтаксиса после загрузки контента
+        function highlightCode() {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        }
 
+        // Перехватываем функцию loadContent для добавления подсветки
+        const originalLoadContent = window.loadContent;
+        window.loadContent = async function (filePath) {
+            await originalLoadContent(filePath);
+            highlightCode();
+        };
+    </script>
 </body>
 
 </html>

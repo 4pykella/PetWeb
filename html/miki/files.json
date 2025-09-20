@@ -1,8 +1,5 @@
 {
-  "Интро": "docs/intro.md",
-  "setup": "docs/setup.md",
-  "dev": {
-    "guide": "docs/dev/guide.md"
-  },
-  "GIT": "docs/git.md"
+  "intro": "docs/intro.md",
+  "git": "docs/git.md"
+
 }
