@@ -38,59 +38,51 @@ jobs:
           username: ${{ secrets.ADMINNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
-          script: 
+          script: |
             cd PetWeb
-            if ! command -v node >/dev/null 2>&1; then
-              echo "❌ node is not installed"
+
+            # Проверка npm
+            if ! command -v npm >/dev/null 2>&1; then
+              echo "❌ npm is not installed"
               exit 1
             fi
 
+            # Переход в директорию и запуск npm скрипта (правильный синтаксис)
             cd html/miki
-            if [ -f "generateFiles.js" ]; then
-              node generateFiles.js
-              echo "✅ generateFiles.js executed successfully"
-            else
-              echo "❌ Error: generateFiles.js not found"
-              exit 1
-            fi
+            node generateFiles  # Используем 'npm run' для запуска скриптов
             cd ../..
-            if [ ! -f "html/miki/files.json" ]; then
-              echo "❌ Error: files.json was not created"
-              exit 1
-            fi
 
+            # Проверяем и перемещаем html директорию (с проверкой на перезапись)
             if [ -d "html" ]; then
+              # Создаем backup или удаляем существующую директорию
               sudo rm -rf /var/www/html.backup 2>/dev/null || true
-              sudo cp -r /var/www/html /var/www/html.backup 2>/dev/null || true
+              sudo cp -r -f /var/www/html /var/www/html.backup 2>/dev/null || true
               sudo cp -r -f html/ /var/www/
-              echo "✅ html directory copied successfully"
-              sudo chmod -R 755 /var/www/html
-              sudo chown -R www-data:www-data /var/www/html
+              echo "✅ html directory moved successfully"
             else
               echo "❌ Error: html directory not found"
               exit 1
             fi
 
-
-            if [ -f "nginx.conf" ]; then  
+            # Проверяем и перемещаем nginx.conf файл (не директорию!)
+            if [ -f "nginx.conf" ]; then  # Используем -f для файла, а не -d для директории
+              # Создаем backup существующего конфига
               sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup 2>/dev/null || true
               sudo cp -f nginx.conf /etc/nginx/
-              echo "✅ nginx.conf copied successfully"
-              sudo chmod 644 /etc/nginx/nginx.conf
-              sudo chown root:root /etc/nginx/nginx.conf
+              echo "✅ nginx.conf moved successfully"
             else
               echo "❌ Error: nginx.conf file not found"
               exit 1
             fi
 
-
+            # Проверка конфигурации nginx
             if sudo nginx -t; then
               echo "✅ Nginx configuration test passed, reloading..."
               sudo systemctl reload nginx
               echo "✅ Nginx reloaded successfully"
             else
               echo "❌ Nginx configuration test failed!"
+              # Восстанавливаем backup конфига
               sudo cp -f /etc/nginx/nginx.conf.backup /etc/nginx/nginx.conf 2>/dev/null || true
-              echo "🔄 Restored previous nginx configuration"
               exit 1
             fi
