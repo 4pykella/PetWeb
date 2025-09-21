@@ -40,31 +40,49 @@ jobs:
           port: 22
           script: |
             cd PetWeb
+
+            # Проверка npm
             if ! command -v npm >/dev/null 2>&1; then
               echo "❌ npm is not installed"
               exit 1
             fi
+
+            # Переход в директорию и запуск npm скрипта (правильный синтаксис)
             cd html/miki
-            npm generateFiles.js
-            cd ..
-            cd ..
+            npm run generateFiles  # Используем 'npm run' для запуска скриптов
+            cd ../..
+
+            # Проверяем и перемещаем html директорию (с проверкой на перезапись)
             if [ -d "html" ]; then
-              mv html/ /var/www/
+              # Создаем backup или удаляем существующую директорию
+              sudo rm -rf /var/www/html.backup 2>/dev/null || true
+              sudo mv /var/www/html /var/www/html.backup 2>/dev/null || true
+              sudo mv html/ /var/www/
+              echo "✅ html directory moved successfully"
             else
-              echo "Warning: html directory not found"
+              echo "❌ Error: html directory not found"
               exit 1
             fi
-            if [ -d "nginx.conf" ]; then
-              mv nginx.conf /etc/nginx/
+
+            # Проверяем и перемещаем nginx.conf файл (не директорию!)
+            if [ -f "nginx.conf" ]; then  # Используем -f для файла, а не -d для директории
+              # Создаем backup существующего конфига
+              sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup 2>/dev/null || true
+              sudo mv nginx.conf /etc/nginx/
+              echo "✅ nginx.conf moved successfully"
             else
-              echo "Warning: nginx.conf directory not found"
+              echo "❌ Error: nginx.conf file not found"
               exit 1
             fi
+
+            # Проверка конфигурации nginx
             if sudo nginx -t; then
-              echo "Nginx configuration test passed, reloading..."
+              echo "✅ Nginx configuration test passed, reloading..."
               sudo systemctl reload nginx
-              echo "Nginx reloaded successfully"
+              echo "✅ Nginx reloaded successfully"
             else
-              echo "Nginx configuration test failed!"
+              echo "❌ Nginx configuration test failed!"
+              # Восстанавливаем backup конфига
+              sudo mv /etc/nginx/nginx.conf.backup /etc/nginx/nginx.conf 2>/dev/null || true
               exit 1
             fi
