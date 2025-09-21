@@ -1,0 +1,13 @@
+{
+  "name": "generate-files",
+  "version": "1.0.0",
+  "description": "Generate files.json from markdown docs",
+  "main": "generateFiles.js",
+  "scripts": {
+    "generate": "node generateFiles.js",
+    "start": "node generateFiles.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
