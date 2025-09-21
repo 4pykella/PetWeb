@@ -40,9 +40,23 @@ jobs:
           port: 22
           script: |
             cd PetWeb
+            if ! command -v npm >/dev/null 2>&1; then
+              echo "❌ npm is not installed"
+              exit 1
+            fi
             npm generateFiles.js
-            mv html /var/www/
-            mv nginx.conf /etc/nginx/nginx.conf
+            if [ -d "html" ]; then
+              mv html/ /var/www/
+            else
+              echo "Warning: html directory not found"
+              exit 1
+            fi
+            if [ -d "nginx.conf" ]; then
+              mv nginx.conf /etc/nginx/
+            else
+              echo "Warning: nginx.conf directory not found"
+              exit 1
+            fi
             if sudo nginx -t; then
               echo "Nginx configuration test passed, reloading..."
               sudo systemctl reload nginx
