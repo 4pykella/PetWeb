@@ -44,6 +44,9 @@ jobs:
               echo "❌ npm is not installed"
               exit 1
             fi
+            cd html/miki
+            cd ..
+            cd ..
             npm generateFiles.js
             if [ -d "html" ]; then
               mv html/ /var/www/
