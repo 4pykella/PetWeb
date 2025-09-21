@@ -42,7 +42,6 @@ jobs:
             cd PetWeb
             npm generateFiles.js
             mv html /var/www/html
-            mv images /var/www/images
             mv nginx.conf /etc/nginx/nginx.conf
             if sudo nginx -t; then
               echo "Nginx configuration test passed, reloading..."
