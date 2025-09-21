@@ -45,9 +45,9 @@ jobs:
               exit 1
             fi
             cd html/miki
-            cd ..
-            cd ..
             npm generateFiles.js
+            cd ..
+            cd ..
             if [ -d "html" ]; then
               mv html/ /var/www/
             else
