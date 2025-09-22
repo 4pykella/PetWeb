@@ -12,13 +12,13 @@
 }
 
 [data-theme="light"] {
-    --bg-primary: #f5f7f8;
+    --bg-primary: linear-gradient(149deg, rgba(37, 156, 113, 1) 0%, rgba(240, 226, 167, 1) 100%);
     --bg-secondary: #e1e6e9;
     --text-primary: #2a3b44;
     --text-secondary: #4d6a7a;
-    --accent: #1a7d56;
-    --accent-light: #259c71;
-    --neon: #1da876;
+    --accent: #BE242A;
+    --accent-light: #BE242A;
+    --neon: #BE242A;
     --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
