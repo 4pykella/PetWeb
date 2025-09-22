@@ -16,18 +16,20 @@
 }
 
 [data-theme="light"] {
-  --bg-primary: #f5f7f8;
-  --bg-secondary: #e1e6e9;
-  --text-primary: #2a3b44;
-  --text-secondary: #4d6a7a;
-  --accent: #1a7d56;
-  --accent-light: #259c71;
-  --neon: #1da876;
-  --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  --code-bg: #f4f4f4;
-  --code-color: #2a3b44;
-  --inline-code-bg: rgba(0,0,0,0.05);
-  --inline-code-color: #2a3b44;
+  /* Светлая тема с зелёным акцентом и контрастом */
+  --bg-primary: #e4f2eb;
+  --bg-secondary: #cde4d9;
+  --text-primary: #0a140e;
+  --text-secondary: #1c2d23;
+  --accent: #14583d;
+  --accent-light: #196c4a;
+  --neon: #1e8056;
+  --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
+  --transition: all 0.3s ease-in-out;
+  --code-bg: #b8dcca;
+  --code-color: #0a140e;
+  --inline-code-bg: rgba(20, 88, 61, 0.25);
+  --inline-code-color: #14583d;
 }
 
 body {
