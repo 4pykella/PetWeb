@@ -18,7 +18,7 @@
     --text-secondary: #4d6a7a;
     --accent: #BE242A;
     --accent-light: #BE242A;
-    --neon: #BE242A;
+    --neon: #3ae0a6;
     --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
@@ -225,7 +225,7 @@ h1 {
 }
 
 .gradient-text {
-    background: linear-gradient(45deg, var(--accent), var(--neon));
+    background:  var(--accent);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -300,9 +300,9 @@ a
 }
 
 @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 #34c78a; }
-    70% { box-shadow: 0 0 0 10px rgba(88, 166, 255, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(88, 166, 255, 0); }
+    0% { box-shadow: 0 0 0 0 var(--accent); }
+    70% { box-shadow: 0 0 0 10px var(--accent); }
+    100% { box-shadow: 0 0 0 0 var(--accent); }
 }
 
 .pulse-btn:hover {
