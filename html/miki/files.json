@@ -1,0 +1,14 @@
+{
+  "Git": "docs/Git.md",
+  "Intro": "docs/Intro.md",
+  "Linux": {
+    "Troubleshooting": {
+      "CPU": "docs/Linux/Troubleshooting/CPU.md",
+      "GPU": "docs/Linux/Troubleshooting/GPU.md",
+      "HDD_SSD_NVME": "docs/Linux/Troubleshooting/HDD_SSD_NVME.md",
+      "Memory": "docs/Linux/Troubleshooting/Memory.md",
+      "Network": "docs/Linux/Troubleshooting/Network.md",
+      "Основа": "docs/Linux/Troubleshooting/Основа.md"
+    }
+  }
+}
