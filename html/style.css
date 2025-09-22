@@ -306,12 +306,8 @@ a
     0% {
         box-shadow: 0 0 0 0 var(--accent);
     }
-    50% {
-        box-shadow: 0 0 15px 10px var(--accent);
-    }
-    100% {
-        box-shadow: 0 0 0 0 var(--accent);
-    }
+    70% { box-shadow: 0 0 0 10px rgba(88, 166, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(88, 166, 255, 0); }
 }
 
 .pulse-btn:hover {
