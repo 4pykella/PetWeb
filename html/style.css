@@ -9,6 +9,7 @@
     --neon: #3ae0a6;
     --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
     --transition: all 0.3s ease-in-out;
+    --bg-tech-card: #0f1a1e;
 }
 
 [data-theme="light"] {
@@ -20,6 +21,7 @@
     --accent-light: #BE242A;
     --neon: #3ae0a6;
     --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    --bg-tech-card: #f8f9fa;
 }
 
 * {
@@ -79,6 +81,7 @@ body {
 
 .theme-btn:hover {
     transform: scale(1.1);
+    background: var(--bg-tech-card);
 }
 
 .header-buttons {
@@ -240,7 +243,7 @@ h1 {
 }
 
 .tech-card {
-    background: var(--bg-primary);
+    background: var(--bg-tech-card);
     border-radius: 8px;
     padding: 1.5rem 1rem;
     display: flex;
@@ -300,9 +303,15 @@ a
 }
 
 @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 var(--accent); }
-    70% { box-shadow: 0 0 0 10px var(--accent); }
-    100% { box-shadow: 0 0 0 0 var(--accent); }
+    0% {
+        box-shadow: 0 0 0 0 var(--accent);
+    }
+    50% {
+        box-shadow: 0 0 15px 10px var(--accent);
+    }
+    100% {
+        box-shadow: 0 0 0 0 var(--accent);
+    }
 }
 
 .pulse-btn:hover {
