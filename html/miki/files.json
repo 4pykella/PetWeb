@@ -10,5 +10,9 @@
       "Network": "docs/Linux/Troubleshooting/Network.md",
       "Основа": "docs/Linux/Troubleshooting/Основа.md"
     }
+  },
+  "Network": {
+    "DNS": "docs/Network/DNS.md",
+    "Модель_OSI": "docs/Network/Модель_OSI.md"
   }
 }
