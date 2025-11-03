@@ -240,6 +240,41 @@ code {
 .nested.open {
   opacity: 1;
 }
+.mobile-menu-btn {
+    background: var(--bg-secondary);
+    border: 2px solid var(--bg-primary);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition);
+    display: none; /* По умолчанию скрыта на десктопе */
+}
+
+.mobile-menu-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Затемнение фона */
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 98;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+}
+
+.menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
 
 /* Адаптивность */
 @media (max-width: 1200px) {
@@ -260,7 +295,7 @@ code {
     border-right: none;
     border-bottom: 1px solid var(--text-secondary);
     padding: 10px;
-    max-height: 300px;
+    max-height: 100%;
     overflow-y: auto;
   }
   
@@ -273,6 +308,42 @@ code {
     font-size: 1.1rem;
     margin: 0 0 0.5rem;
   }
+  .theme-btn {
+    margin-right: 0px;
+  }
+    .mobile-menu-btn {
+        display: block; /* Показываем на мобильных */
+    }
+    
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 280px;
+        z-index: 99;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    /* Остальные стили для мобильной версии остаются как у вас */
+    .miki-container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+    
+    .content {
+        padding: 20px;
+        flex: none;
+        width: 100%;
+    }
+
 }
 
 @media (max-width: 768px) {
@@ -302,7 +373,7 @@ code {
   }
   
   .content {
-    padding: 10px;
+    padding: 0px;
   }
   
   .card {

@@ -1,7 +1,12 @@
 {
-  "Git": "docs/Git.md",
-  "Intro": "docs/Intro.md",
+  "1ntro": "docs/1ntro.md",
+  "git": "docs/git.md",
+  "GitLab": {
+    "Установка": "docs/GitLab/Установка.md"
+  },
   "Linux": {
+    "Docker": "docs/Linux/Docker.md",
+    "Kubernetes": {},
     "Troubleshooting": {
       "CPU": "docs/Linux/Troubleshooting/CPU.md",
       "GPU": "docs/Linux/Troubleshooting/GPU.md",
@@ -9,10 +14,20 @@
       "Memory": "docs/Linux/Troubleshooting/Memory.md",
       "Network": "docs/Linux/Troubleshooting/Network.md",
       "Основа": "docs/Linux/Troubleshooting/Основа.md"
-    }
+    },
+    "WiFi": "docs/Linux/WiFi.md"
   },
   "Network": {
     "DNS": "docs/Network/DNS.md",
+    "VPN": "docs/Network/VPN.md",
     "Модель_OSI": "docs/Network/Модель_OSI.md"
+  },
+  "Roadmap": "docs/Roadmap.md",
+  "Utilities": {
+    "RustDesk": "docs/Utilities/RustDesk.md"
+  },
+  "Windows": {
+    "Opensource": "docs/Windows/Opensource.md",
+    "Диагностика": "docs/Windows/Диагностика.md"
   }
 }

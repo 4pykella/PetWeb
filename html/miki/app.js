@@ -111,3 +111,47 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
+const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+const sidebar = document.querySelector('.sidebar');
+const menuOverlay = document.getElementById('menu-overlay');
+
+if (mobileMenuToggle && sidebar && menuOverlay) {
+    function toggleMenu() {
+        sidebar.classList.toggle('active');
+        menuOverlay.classList.toggle('active');
+        
+        // Меняем иконку
+        if (sidebar.classList.contains('active')) {
+            mobileMenuToggle.innerHTML = '✕';
+            document.body.style.overflow = 'hidden'; // Блокируем прокрутку фона
+        } else {
+            mobileMenuToggle.innerHTML = '☰';
+            document.body.style.overflow = ''; // Восстанавливаем прокрутку
+        }
+    }
+    
+    mobileMenuToggle.addEventListener('click', toggleMenu);
+    
+    // Закрываем меню при клике на overlay
+    menuOverlay.addEventListener('click', toggleMenu);
+    
+    // Закрываем меню при клике на ссылку в сайдбаре
+    const sidebarLinks = sidebar.querySelectorAll('a');
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 900) {
+                toggleMenu();
+            }
+        });
+    });
+    
+    // Закрываем меню при изменении размера окна
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 900) {
+            sidebar.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            mobileMenuToggle.innerHTML = '☰';
+            document.body.style.overflow = '';
+        }
+    });
+}
