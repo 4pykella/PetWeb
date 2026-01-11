@@ -35,8 +35,13 @@ services:
       - mynetwork
   grafana:
     image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
     networks:
       - mynetwork
+    restart: unless-stopped
+    depends_on:
+      - prometheus
         
 networks:
   mynetwork:
