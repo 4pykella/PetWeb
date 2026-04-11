@@ -6,7 +6,7 @@ services:
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt:rw
       - ./data/certbot/www:/var/www/certbot:rw
-    command: certonly --webroot --webroot-path=/var/www/certbot --email admin@chepykella.ru --agree-tos --no-eff-email --force-renewal -d chepykella.ru -d www.chepykella.ru
+    command: certonly --webroot --webroot-path=/var/www/certbot --email admin@chepykella.ru --agree-tos --no-eff-email --force-renewal -d www.chepykella.ru
 
   nginx:
     image: nginx:alpine
