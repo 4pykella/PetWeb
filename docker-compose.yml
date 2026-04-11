@@ -1,6 +1,15 @@
 version: '3.8'
 
 services:
+  
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt:rw
+      - ./data/certbot/www:/var/www/certbot:rw
+    command: certonly --webroot --webroot-path=/var/www/certbot --email admin@chepykella.ru --agree-tos --no-eff-email --force-renewal -d chepykella.ru -d www.chepykella.ru
+
   nginx:
     image: nginx:alpine
     container_name: nginx
@@ -18,15 +27,6 @@ services:
     depends_on:
       - grafana
 
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - ./data/certbot/conf:/etc/letsencrypt:rw
-      - ./data/certbot/www:/var/www/certbot:rw
-    depends_on:
-      - nginx
-    command: certonly --webroot --webroot-path=/var/www/certbot --email admin@chepykella.ru --agree-tos --no-eff-email --force-renewal -d chepykella.ru -d www.chepykella.ru
 
   grafana:
     image: grafana/grafana:latest
