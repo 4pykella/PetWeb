@@ -1,74 +1,30 @@
 #!/bin/bash
 
-# Создаем структуру директорий
-mkdir -p data/certbot/conf data/certbot/www html
+set -e  # Остановка при любой ошибке
 
-# Запускаем nginx без SSL конфига
-echo "Создаем временный nginx.conf без SSL..."
-cat > nginx-temp.conf << 'EOF'
-events {
-    worker_connections 1024;
-}
-http {
-    server {
-        listen 80;
-        server_name chepykella.ru www.chepykella.ru;
-        location /.well-known/acme-challenge/ {
-            root /var/www/certbot;
-        }
-        location / {
-            root /var/www/html;
-        }
-    }
-}
-EOF
+echo "📁 Создание директорий..."
+mkdir -p data/certbot/{conf,www}
+mkdir -p html
 
-# Запускаем временный контейнер nginx
-echo "Запускаем временный nginx для получения сертификатов..."
-docker run --rm -d \
-  --name nginx-temp \
-  -v $(pwd)/nginx-temp.conf:/etc/nginx/nginx.conf:ro \
-  -v $(pwd)/data/certbot/www:/var/www/certbot:rw \
-  -v $(pwd)/html:/var/www/html:ro \
-  -p 80:80 \
-  nginx:alpine
+echo "🚀 Запуск Nginx для верификации..."
+docker compose up -d nginx
 
-# Ждем запуска nginx
+echo "⏳ Ожидание запуска Nginx..."
 sleep 5
 
-# Получаем сертификаты
-echo "Получаем SSL сертификаты от Let's Encrypt..."
-docker run --rm \
-  -v $(pwd)/data/certbot/conf:/etc/letsencrypt:rw \
-  -v $(pwd)/data/certbot/www:/var/www/certbot:rw \
-  certbot/certbot certonly \
-  --webroot --webroot-path=/var/www/certbot \
-  --email admin@chepykella.ru \
-  --agree-tos --no-eff-email \
-  --force-renewal \
-  -d chepykella.ru \
-  -d www.chepykella.ru
+echo "🔐 Получение SSL сертификата..."
+docker compose run --rm certbot
 
-# Останавливаем временный nginx
-docker stop nginx-temp
+echo "🔄 Перезапуск Nginx с SSL..."
+docker compose restart nginx
 
-# Проверяем сертификаты
-echo "Проверяем полученные сертификаты..."
-if [ -d "data/certbot/conf/live/chepykella.ru" ]; then
-    echo "✅ Сертификаты успешно получены!"
-    ls -la data/certbot/conf/live/chepykella.ru/
-else
-    echo "❌ Не удалось получить сертификаты"
-    exit 1
-fi
+echo "📊 Запуск Grafana и Prometheus..."
+docker compose up -d grafana prometheus
 
-# Запускаем основной docker-compose
-echo "Запускаем основную систему..."
-docker-compose down
-docker-compose up -d
-
-echo "✅ Система запущена!"
+echo ""
+echo "✅ SSL сертификаты получены и сервисы запущены!"
+echo ""
 echo "📌 Доступные сервисы:"
-echo "   - https://chepykella.ru"
-echo "   - https://chepykella.ru/grafana"
-echo "   - https://chepykella.ru/prometheus"
+echo "   🏠 Главная: https://chepykella.ru"
+echo "   📊 Grafana: https://chepykella.ru/grafana (admin/admin)"
+echo "   📈 Prometheus: https://chepykella.ru/prometheus"
