@@ -34,7 +34,7 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
-      - '--web.external-url=https://www.chepykella.ru/prometheus'
+      - '--web.external-url=https://prometheus.chepykella.ru'
       - '--web.route-prefix=/'
     networks:
       - monitoring
@@ -45,7 +45,7 @@ services:
     container_name: grafana
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_SERVER_ROOT_URL=https://www.chepykella.ru/grafana
+      - GF_SERVER_ROOT_URL=https://grafana.chepykella.ru
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
     volumes:
       - grafana_data:/var/lib/grafana
