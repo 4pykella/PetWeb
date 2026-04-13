@@ -7,7 +7,6 @@
   "Linux": {
     "Docker": "docs/Linux/Docker.md",
     "Kubernetes": {},
-    "SSH": "docs/Linux/SSH.md",
     "Troubleshooting": {
       "CPU": "docs/Linux/Troubleshooting/CPU.md",
       "GPU": "docs/Linux/Troubleshooting/GPU.md",
@@ -24,11 +23,15 @@
     "Модель_OSI": "docs/Network/Модель_OSI.md"
   },
   "Roadmap": "docs/Roadmap.md",
+  "Telegram": "docs/Telegram.md",
   "Utilities": {
-    "RustDesk": "docs/Utilities/RustDesk.md"
+    "SSH": "docs/Utilities/SSH.md"
   },
   "Windows": {
     "Opensource": "docs/Windows/Opensource.md",
+    "Server": {
+      "Active_Directory": "docs/Windows/Server/Active_Directory.md"
+    },
     "Диагностика": "docs/Windows/Диагностика.md"
   }
 }
