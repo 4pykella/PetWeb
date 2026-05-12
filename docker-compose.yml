@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   nginx:
     build: ./nginx
@@ -11,11 +9,6 @@ services:
       - ./html:/usr/share/nginx/html
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
-    depends_on:
-      - prometheus
-      - grafana
-      - portainer
-      - nginx-exporter
     networks:
       - monitoring
     restart: unless-stopped
@@ -24,7 +17,7 @@ services:
     image: nginx/nginx-prometheus-exporter:latest
     container_name: nginx-exporter
     ports:
-      - "9113:9113"  # метрики будут доступны на порту 9113
+      - "9113:9113"
     environment:
       - NGINX_STATUS_URL=http://nginx/nginx_status
     depends_on:
