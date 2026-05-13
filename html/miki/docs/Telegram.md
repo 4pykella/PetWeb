@@ -5,5 +5,5 @@
 2) Запускаем докер (ну вдруг кто не понял)
 3) Запускаем образ на докере. Выставляем порт который вам подходит. В примере прокси на порту 8443
 ```bash
-    docker run -d -p8443:443 --name=mtproxy --restart=always -v mtproxy:/data mtproxy/mtproxy && docker logs -f mtproxy
+    docker run -d -p443:8443 --name=mtproxy --restart=always -v mtproxy:/data mtproxy/mtproxy && docker logs -f mtproxy
 ```

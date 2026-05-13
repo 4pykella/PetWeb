@@ -19,7 +19,10 @@
   },
   "Network": {
     "DNS": "docs/Network/DNS.md",
-    "VPN": "docs/Network/VPN.md",
+    "VPS": {
+      "3x": "docs/Network/VPS/3x.md",
+      "WG": "docs/Network/VPS/WG.md"
+    },
     "Модель_OSI": "docs/Network/Модель_OSI.md"
   },
   "Roadmap": "docs/Roadmap.md",
@@ -33,5 +36,8 @@
       "Active_Directory": "docs/Windows/Server/Active_Directory.md"
     },
     "Диагностика": "docs/Windows/Диагностика.md"
+  },
+  "Пасты": {
+    "9600_бот_и_все_все_все": "docs/Пасты/9600_бот_и_все_все_все.md"
   }
 }

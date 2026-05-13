@@ -41,7 +41,7 @@ sudo docker run --name hbbr -v ./data:/root -td --net=host --restart unless-stop
 
 #### 4. Доступ к сгенерированным ключам
 ```bash
-cd /data
+cd data
 cat id_ed**.pub
 ```
 
