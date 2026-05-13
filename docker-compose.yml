@@ -6,13 +6,22 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./html:/usr/share/nginx/html          # ваш сайт
-      - ./data/certbot/conf:/etc/letsencrypt   # сертификаты от Let's Encrypt
-      - ./data/certbot/www:/var/www/certbot    # для верификации
+      - ./html:/usr/share/nginx/html
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    networks:
+      - monitoring
+    restart: unless-stopped
+
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: nginx-exporter
+    ports:
+      - "9113:9113"
+    environment:
+      - NGINX_STATUS_URL=http://nginx/nginx_status
     depends_on:
-      - prometheus
-      - grafana
-      - portainer
+      - nginx
     networks:
       - monitoring
     restart: unless-stopped
@@ -20,9 +29,14 @@ services:
   certbot:
     image: certbot/certbot:latest
     volumes:
-      - ./data/certbot/conf:/etc/letsencrypt   # Хранилище сертификатов
-      - ./data/certbot/www:/var/www/certbot    # Папка для http-верификации
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet --post-hook \"nginx -s reload\"; sleep 12h & wait $${!}; done;'"
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: >
+      /bin/sh -c 'trap exit TERM;
+      while :; do
+        certbot renew --webroot -w /var/www/certbot --quiet --post-hook "nginx -s reload";
+        sleep 12h & wait $${!};
+      done;'
     restart: unless-stopped
 
   prometheus:
@@ -63,6 +77,22 @@ services:
     networks:
       - monitoring
     restart: unless-stopped
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    pid: "host"
+    networks:
+      - monitoring
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($$|/)"'
 
 networks:
   monitoring:
