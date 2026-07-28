@@ -1,0 +1,72 @@
+name: CI/CD 
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Docker compose up
+        run: |
+          docker compose -f docker-compose.yml up -d --build
+          docker compose -f docker-compose.yml logs
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Ssh connect
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: ${{ secrets.PORT }} 
+          script: echo "Good"
+
+      steps:
+      - name: git clone
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: ${{ secrets.PORT }} 
+          script: |
+            cd PetWeb
+            git pull origin main
+            git status
+          
+    - name: cert
+      uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: ${{ secrets.PORT }} 
+          script: |
+            cd PetWeb
+            chmod +x cert.sh 
+            ./cert.sh 
+            
+    - name: docker-compoce
+      uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: ${{ secrets.PORT }} 
+          script: |
+            docker compose down
+            docker compose up -d --build
+
+          
