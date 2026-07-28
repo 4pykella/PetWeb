@@ -32,8 +32,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }} 
           script: echo "Good"
-
-      steps:
+          
       - name: git clone
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -45,9 +44,9 @@ jobs:
             cd PetWeb
             git pull origin main
             git status
-          
-    - name: cert
-      uses: appleboy/ssh-action@v0.1.7
+            
+      - name: cert
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -57,9 +56,9 @@ jobs:
             cd PetWeb
             chmod +x cert.sh 
             ./cert.sh 
- 
-    - name: docker-compoce
-      uses: appleboy/ssh-action@v0.1.7
+            
+      - name: docker-compoce
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
