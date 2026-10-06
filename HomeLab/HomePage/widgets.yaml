@@ -1,0 +1,18 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/info-widgets/
+
+- logo:
+    # icon: https://40k.gallery/wp-content/uploads/2026/09/Ironjawz.svg # optional
+    icon: https://www.svgrepo.com/show/442994/brand-cthulhu.svg
+
+- resources:
+    cpu: true
+    memory: true
+    disk: /
+    cputemp: true
+    uptime: true
+
+- search:
+    provider: google
+    target: _blank

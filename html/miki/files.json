@@ -4,9 +4,16 @@
   "GitLab": {
     "Установка": "docs/GitLab/Установка.md"
   },
+  "HomeLab": {
+    "HomePage": "docs/HomeLab/HomePage.md",
+    "TrueNAS": {
+      "Пользователи": "docs/HomeLab/TrueNAS/Пользователи.md"
+    }
+  },
   "Linux": {
     "Docker": "docs/Linux/Docker.md",
     "Kubernetes": {},
+    "Nginx": "docs/Linux/Nginx.md",
     "Troubleshooting": {
       "CPU": "docs/Linux/Troubleshooting/CPU.md",
       "GPU": "docs/Linux/Troubleshooting/GPU.md",
