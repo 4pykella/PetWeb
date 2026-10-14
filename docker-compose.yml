@@ -98,14 +98,30 @@ services:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage
     environment:
-      - HOMEPAGE_ALLOWED_HOSTS=homepage.chepykella.ru,185.189.167.175:3000,185.189.167.175,localhost:3000,homepage:3000
+      - HOMEPAGE_ALLOWED_HOSTS=*
     networks:
       - monitoring
     ports:
       - 3000:3000
     volumes:
-      - /HomeLab/HomePage:/app/config # Make sure your local config directory exists
+      - ./HomeLab/HomePage:/app/config # Make sure your local config directory exists
       - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
+    restart: unless-stopped
+
+
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-server
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - PASSWORD=Selectel_password
+      - PROXY_DOMAIN=code.protechblog.ru
+    volumes:
+      - ./code-server-config:/config
+    expose:
+      - "9443"
     restart: unless-stopped
 
 

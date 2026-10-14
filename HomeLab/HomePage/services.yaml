@@ -1,19 +1,22 @@
 - HomeLab:
     - Router:
         icon: openwrt.png
-        href: https://home.chepykella.ru/OpenWRT/
+        href: https://openwrt.chepykella.ru/
         description: OpenWRT роутер
     - Truenas:
         icon: truenas.png
-        href: https://home.chepykella.ru/truenas/
+        href: https://truenas.chepykella.ru/
         description: NAS
     - Proxmox:
         icon: proxmox.png
-        href: https://home.chepykella.ru/proxmox/
-        ping: home.chepykella.ru/proxmox/
+        href: https://proxmox.chepykella.ru/
+        ping: proxmox.chepykella.ru/
     - Code:
         icon: code.png
-        href: http://home.chepykella.ru/code/
+        href: http://code.chepykella.ru/
+    - Nextcloud:
+        icon: nextcloud.png
+        href: http://home.chepykella.ru/nextcloud/
 
 - PetWeb:
     - WebPage:
@@ -32,4 +35,11 @@
         icon: portainer.png
         href: https://www.chepykella.ru/portainer
         description: Управление докером сервера
-     
+
+- VDS:
+    - WireguardSPB:
+        icon: prometheus.png
+        ping: 185.189.167.175:51822
+    - WireguardKZ:
+        icon: prometheus.png
+        ping: 88.218.68.236:51840

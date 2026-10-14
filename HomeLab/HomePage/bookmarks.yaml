@@ -6,13 +6,14 @@
         - icon: habr.png
           href: https://habr.com/
 
-- Social:
-    - Github:
-        - icon: github.png
-          href: https://github.com/
-    - Habr:
-        - icon: habr.png
-          href: https://habr.com/
+- Work:
+    - HeadHanter:
+        - abbr: HH
+          href: https://hh.ru/
+    - HabrCareer:
+        - abbr: HC
+          href: https://career.habr.com/
+
 
 - Entertainment:
     - YouTube:

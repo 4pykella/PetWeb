@@ -5,7 +5,7 @@ theme: dark # or light
 color: slate
 
 background: 
-  image: https://images.unsplash.com/photo-1578664865136-74b450f31cd9?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
+  image: https://img.magnific.com/free-photo/sky-sea-april-01-2024_58702-17003.jpg?t=st=1791991194~exp=1791994794~hmac=14e10cdcd21152036f53adcb794720837ce3a8b3499ae507eb867a843688ff6d&w=2000
   blur: sm
   saturate: 50 
   brightness: 25 
