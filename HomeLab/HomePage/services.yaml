@@ -1,19 +1,19 @@
 - HomeLab:
     - Router:
         icon: openwrt.png
-        href: https://home.chepykella.ru
+        href: https://home.chepykella.ru/OpenWRT/
         description: OpenWRT роутер
     - Truenas:
         icon: truenas.png
-        href: https://home.chepykella.ru:8443
+        href: https://home.chepykella.ru/truenas/
         description: NAS
     - Proxmox:
         icon: proxmox.png
-        href: https://home.chepykella.ru:8006
-        ping: home.chepykella.ru:8006
+        href: https://home.chepykella.ru/proxmox/
+        ping: home.chepykella.ru/proxmox/
     - Code:
         icon: code.png
-        href: http://home.chepykella.ru:30145/login
+        href: http://home.chepykella.ru/code/
 
 - PetWeb:
     - WebPage:
