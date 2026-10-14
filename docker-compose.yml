@@ -117,7 +117,7 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
       - PASSWORD=Selectel_password
-      - PROXY_DOMAIN=code.protechblog.ru
+      - PROXY_DOMAIN=*
     volumes:
       - ./code-server-config:/config
     expose:
