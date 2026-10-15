@@ -122,6 +122,8 @@ services:
       - ./code-server-config:/config
     ports:
       - 10443:8443
+    networks:            # <--- Добавили контейнер в общую сеть с Nginx
+      - monitoring
     restart: unless-stopped
 
 
