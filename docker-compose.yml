@@ -120,8 +120,8 @@ services:
       - PROXY_DOMAIN=*
     volumes:
       - ./code-server-config:/config
-    expose:
-      - "9443"
+    ports:
+      - 10443:8443
     restart: unless-stopped
 
 
