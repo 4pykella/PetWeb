@@ -1,6 +1,9 @@
 services:
   nginx:
     build: ./nginx
+    container_name: nginx
+    environment:
+      - DOMAIN=${DOMAIN:-chepykella.ru}
     ports:
       - "80:80"
       - "443:443"
@@ -16,27 +19,14 @@ services:
   nginx-exporter:
     image: nginx/nginx-prometheus-exporter:latest
     container_name: nginx-exporter
-    ports:
-      - "9113:9113"
-    environment:
-      - NGINX_STATUS_URL=http://nginx/nginx_status
+    # новые версии экспортера читают адрес только из флага (env игнорируется);
+    # порт наружу не публикуем — Prometheus ходит по docker-сети
+    command:
+      - --nginx.scrape-uri=http://nginx/nginx_status
     depends_on:
       - nginx
     networks:
       - monitoring
-    restart: unless-stopped
-
-  certbot:
-    image: certbot/certbot:latest
-    volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
-    entrypoint: >
-      /bin/sh -c 'trap exit TERM;
-      while :; do
-        certbot renew --webroot -w /var/www/certbot --quiet --post-hook "nginx -s reload";
-        sleep 12h & wait $${!};
-      done;'
     restart: unless-stopped
 
   prometheus:
@@ -58,7 +48,8 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:?задай GRAFANA_ADMIN_PASSWORD в .env}
       - GF_SERVER_ROOT_URL=https://grafana.chepykella.ru
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
     volumes:
@@ -99,6 +90,13 @@ services:
     container_name: homepage
     environment:
       - HOMEPAGE_ALLOWED_HOSTS=*
+      # HOMEPAGE_VAR_* подставляются в конфиги Homepage как {{HOMEPAGE_VAR_...}}
+      - HOMEPAGE_VAR_GRAFANA_USER=${GRAFANA_ADMIN_USER:-admin}
+      - HOMEPAGE_VAR_GRAFANA_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-}
+      - HOMEPAGE_VAR_PORTAINER_KEY=${PORTAINER_API_KEY:-}
+      - HOMEPAGE_VAR_PROXMOX_USER=${PROXMOX_API_USER:-}
+      - HOMEPAGE_VAR_PROXMOX_TOKEN=${PROXMOX_API_TOKEN:-}
+      - HOMEPAGE_VAR_TRUENAS_KEY=${TRUENAS_API_KEY:-}
     networks:
       - monitoring
     ports:
@@ -113,19 +111,39 @@ services:
     image: lscr.io/linuxserver/code-server:latest
     container_name: code-server
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-      - PASSWORD=Selectel_password
-      - PROXY_DOMAIN=code.chepykella.ru
+      - PUID=${CODE_SERVER_UID:-1000}
+      - PGID=${CODE_SERVER_GID:-1000}
+      - TZ=${TZ:-Europe/Moscow}
+      - PASSWORD=${CODE_SERVER_PASSWORD:?задай CODE_SERVER_PASSWORD в .env}
+      - PROXY_DOMAIN=code.${DOMAIN:-chepykella.ru}
+      # при открытии сразу показывается каталог проекта на сервере
+      - DEFAULT_WORKSPACE=/petweb
     volumes:
       - ./code-server-config:/config
+      - .:/petweb
     ports:
       - 10443:8443
     networks:            # <--- Добавили контейнер в общую сеть с Nginx
       - monitoring
     restart: unless-stopped
 
+  # Telegram-бот графика рабочих дней
+  workdays-bot:
+    build: ./bot
+    container_name: workdays-bot
+    environment:
+      - TOKEN=${BOT_TOKEN:-}
+      - TZ=${TZ:-Europe/Moscow}
+      - SCHEDULE_START=${SCHEDULE_START:-2026-09-04}
+      - SCHEDULE_PATTERN=${SCHEDULE_PATTERN:-N,N,O,O,O,D,D,O}
+      - PERSON_TAG=${PERSON_TAG:-@chepykella}
+      - ADMIN_IDS=${BOT_ADMIN_IDS:-}
+      - DATA_DIR=/app/data
+    volumes:
+      - bot_data:/app/data
+    networks:
+      - monitoring
+    restart: on-failure
 
 networks:
   monitoring:
@@ -135,3 +153,4 @@ volumes:
   prometheus_data:
   grafana_data:
   portainer_data:
+  bot_data:

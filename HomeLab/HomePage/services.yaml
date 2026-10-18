@@ -1,45 +1,199 @@
-- HomeLab:
-    - Router:
-        icon: openwrt.png
-        href: https://openwrt.chepykella.ru/
-        description: OpenWRT роутер
-    - Truenas:
-        icon: truenas.png
-        href: https://truenas.chepykella.ru/
-        description: NAS
-    - Proxmox:
-        icon: proxmox.png
-        href: https://proxmox.chepykella.ru/
-        ping: proxmox.chepykella.ru/
-    - Code:
-        icon: code.png
-        href: http://code.chepykella.ru/
-    - Nextcloud:
-        icon: nextcloud.png
-        href: http://home.chepykella.ru/nextcloud/
+# Сервисы Homepage. Документация: https://gethomepage.dev/configs/services/
+# server: local + container — статус и нагрузка контейнера (docker.yaml)
+# siteMonitor — HTTP-проверка изнутри docker-сети (не зависит от NAT/DNS)
+# {{HOMEPAGE_VAR_*}} — значения из .env (см. docker-compose.yml → homepage)
 
-- PetWeb:
-    - WebPage:
-        href: https://www.chepykella.ru/
-        description: Сайт визитка
-        ping: www.chepykella.ru
+- Мониторинг:
+    - Сервер:
+        icon: mdi-server
+        description: Archimedes — node-exporter
+        href: https://grafana.chepykella.ru/
+        widget:
+          type: prometheusmetric
+          url: http://prometheus:9090
+          refreshInterval: 15000
+          metrics:
+            - label: CPU
+              query: 100 - avg(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100
+              format:
+                type: percent
+                options:
+                  maximumFractionDigits: 1
+            - label: RAM
+              query: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100
+              format:
+                type: percent
+                options:
+                  maximumFractionDigits: 1
+            - label: Диск /
+              query: max((1 - node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100)
+              format:
+                type: percent
+                options:
+                  maximumFractionDigits: 1
+            - label: Темп.
+              query: max(node_thermal_zone_temp)
+              format:
+                type: number
+                suffix: "°C"
+                options:
+                  maximumFractionDigits: 1
+
+    - Нагрузка:
+        icon: mdi-chart-line
+        description: Load average, сеть, аптайм
+        href: https://prometheus.chepykella.ru/
+        widget:
+          type: prometheusmetric
+          url: http://prometheus:9090
+          refreshInterval: 15000
+          metrics:
+            - label: Load 1m
+              query: node_load1
+              format:
+                type: number
+                options:
+                  maximumFractionDigits: 2
+            - label: Входящий
+              query: sum(rate(node_network_receive_bytes_total{device!~"lo|veth.*|docker.*|br-.*"}[5m])) * 8
+              format:
+                type: bitrate
+            - label: Исходящий
+              query: sum(rate(node_network_transmit_bytes_total{device!~"lo|veth.*|docker.*|br-.*"}[5m])) * 8
+              format:
+                type: bitrate
+            - label: Аптайм
+              query: time() - node_boot_time_seconds
+              format:
+                type: duration
+
+    - Nginx:
+        icon: nginx.png
+        description: Запросы и соединения
+        server: local
+        container: nginx
+        siteMonitor: http://nginx/nginx_status
+        widget:
+          type: prometheusmetric
+          url: http://prometheus:9090
+          refreshInterval: 15000
+          metrics:
+            - label: Запросов/с
+              query: sum(rate(nginx_http_requests_total[5m]))
+              format:
+                type: number
+                options:
+                  maximumFractionDigits: 2
+            - label: Активных
+              query: sum(nginx_connections_active)
+              format:
+                type: number
+            - label: Nginx up
+              query: max(nginx_up)
+              format:
+                type: number
+
+    - Prometheus:
+        icon: prometheus.png
+        href: https://prometheus.chepykella.ru/targets
+        description: Цели сбора метрик
+        server: local
+        container: prometheus
+        siteMonitor: http://prometheus:9090/-/healthy
+        widget:
+          type: prometheus
+          url: http://prometheus:9090
+
     - Grafana:
         icon: grafana.png
         href: https://grafana.chepykella.ru/
-        description: Мониторинг сервера 
-    - Prometheus:
-        icon: prometheus.png
-        href: https://prometheus.chepykella.ru/query
-        description: Ручка мониторинга сервера 
+        description: Дашборды
+        server: local
+        container: grafana
+        siteMonitor: http://grafana:3000/api/health
+        widget:
+          type: grafana
+          url: http://grafana:3000
+          username: "{{HOMEPAGE_VAR_GRAFANA_USER}}"
+          password: "{{HOMEPAGE_VAR_GRAFANA_PASSWORD}}"
+
+- PetWeb:
+    - Сайт-визитка:
+        icon: mdi-card-account-details
+        href: https://www.chepykella.ru/
+        description: www.chepykella.ru
+        server: local
+        container: nginx
+        siteMonitor: http://nginx/nginx_status
+    - Miki:
+        icon: mdi-book-open-page-variant
+        href: https://www.chepykella.ru/miki/
+        description: База знаний
     - Portainer:
         icon: portainer.png
-        href: https://www.chepykella.ru/portainer
-        description: Управление докером сервера
+        href: https://www.chepykella.ru/portainer/
+        description: Управление Docker
+        server: local
+        container: portainer
+        siteMonitor: http://portainer:9000
+        # Виджет: создай API-ключ в Portainer (My account → Access tokens),
+        # впиши PORTAINER_API_KEY в .env и раскомментируй:
+        # widget:
+        #   type: portainer
+        #   url: http://portainer:9000
+        #   env: 2
+        #   key: "{{HOMEPAGE_VAR_PORTAINER_KEY}}"
+    - code-server:
+        icon: code.png
+        href: https://code.chepykella.ru/
+        description: VS Code — каталог /opt/petweb
+        server: local
+        container: code-server
+        siteMonitor: http://code-server:8443/healthz
+    - Бот графика:
+        icon: telegram.png
+        description: Telegram — рабочие смены
+        server: local
+        container: workdays-bot
+
+- HomeLab:
+    - Proxmox:
+        icon: proxmox.png
+        href: https://proxmox.chepykella.ru/
+        description: Виртуализация
+        ping: 94.19.145.226
+        # Виджет: создай API-токен (Datacenter → Permissions → API Tokens, роль PVEAuditor),
+        # впиши PROXMOX_API_USER (user@pam!token) и PROXMOX_API_TOKEN в .env и раскомментируй:
+        # widget:
+        #   type: proxmox
+        #   url: https://94.19.145.226:8006
+        #   username: "{{HOMEPAGE_VAR_PROXMOX_USER}}"
+        #   password: "{{HOMEPAGE_VAR_PROXMOX_TOKEN}}"
+    - TrueNAS:
+        icon: truenas.png
+        href: https://truenas.chepykella.ru/
+        description: NAS
+        ping: 94.19.145.226
+        # widget:
+        #   type: truenas
+        #   url: https://94.19.145.226:8443
+        #   key: "{{HOMEPAGE_VAR_TRUENAS_KEY}}"
+    - Router:
+        icon: openwrt.png
+        href: https://openwrt.chepykella.ru/
+        description: OpenWRT
+        ping: 94.19.145.226
+    - Nextcloud:
+        icon: nextcloud.png
+        href: https://home.chepykella.ru/nextcloud/
+        description: Своё облако
 
 - VDS:
     - WireguardSPB:
         icon: wireguard.png
+        description: 185.189.167.175
         ping: 185.189.167.175
     - WireguardKZ:
         icon: wireguard.png
+        description: 88.218.68.236
         ping: 88.218.68.236

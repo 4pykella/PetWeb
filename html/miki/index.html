@@ -1,57 +1,124 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Miki</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <title>Miki — база знаний</title>
+    <meta name="description" content="Личная база знаний: Linux, сети, Docker, Kubernetes, HomeLab.">
+    <script>
+        // тема до отрисовки — без мигания
+        try {
+            document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');
+        } catch (e) { }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <link id="hljs-dark" rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <link id="hljs-light" rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" disabled>
+    <link rel="stylesheet" href="style.css?v=4">
     <link rel="icon" href="img/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
 
 <body>
-    <div class="header-buttons">
-        <button id="home-toggle" class="theme-btn" aria-label="На главную"
-            onclick="window.location.href='https://www.chepykella.ru'">🏠</button>
-        <button id="theme-toggle" class="theme-btn" aria-label="Сменить тему">🌙</button>
-        <button id="mobile-menu-toggle" class="mobile-menu-btn" aria-label="Меню">☰</button>
-    </div>
+    <div class="bg-pattern"></div>
+    <div class="bg-grid"></div>
+
+    <nav class="header-buttons" aria-label="Быстрые ссылки">
+        <button id="mobile-menu-toggle" class="theme-btn mobile-only" aria-label="Меню" data-tooltip="Меню">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <button id="search-open-top" class="theme-btn" aria-label="Поиск" data-tooltip="Поиск · Ctrl K">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+        <a href="/" class="theme-btn" aria-label="На главную" data-tooltip="Визитка">
+            <i class="fa-solid fa-user"></i>
+        </a>
+        <a href="https://home.chepykella.ru" class="theme-btn" target="_blank" rel="noopener noreferrer"
+            aria-label="Homepage — дашборд HomeLab" data-tooltip="Homepage">
+            <i class="fa-solid fa-house-signal"></i>
+        </a>
+        <button id="theme-toggle" class="theme-btn" aria-label="Сменить тему" data-tooltip="Тема">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+    </nav>
+
     <div class="menu-overlay" id="menu-overlay"></div>
-    <div class="miki-container">
-        <aside class="sidebar">
-            <h2>Miki</h2>
-            <input type="text" id="search" placeholder="Поиск..."
-                style="width: auto; padding:5px; margin-bottom:10px; border-radius:4px; border:1px solid var(--text-secondary); background: var(--bg-primary); color: var(--text-primary);">
-            <ul id="nav"></ul>
+
+    <div class="miki-layout">
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar" id="sidebar">
+            <a href="#" class="brand" id="brand">
+                <span class="brand-icon"><i class="fa-solid fa-book-open"></i></span>
+                <span>
+                    <strong class="neon-text">Miki</strong>
+                    <small>~/knowledge-base</small>
+                </span>
+            </a>
+
+            <button class="search-trigger" id="search-open" type="button">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Поиск по Miki…</span>
+                <kbd>Ctrl K</kbd>
+            </button>
+
+            <div class="tree-filter">
+                <i class="fa-solid fa-filter"></i>
+                <input type="text" id="tree-filter" placeholder="Фильтр по названию" autocomplete="off">
+            </div>
+
+            <div class="tree-tools">
+                <span id="docs-count"></span>
+                <button type="button" id="expand-all" title="Развернуть всё"><i class="fa-solid fa-angles-down"></i></button>
+                <button type="button" id="collapse-all" title="Свернуть всё"><i class="fa-solid fa-angles-up"></i></button>
+            </div>
+
+            <ul id="nav" class="tree"></ul>
         </aside>
 
+        <!-- ===== CONTENT ===== -->
         <main class="content">
-            <div id="content" class="card">Выберите тему из списка</div>
+            <article class="card doc" id="doc">
+                <nav class="breadcrumbs" id="breadcrumbs" aria-label="Путь"></nav>
+                <div class="doc-meta" id="doc-meta"></div>
+                <div id="content" class="markdown">
+                    <p class="placeholder"><i class="fa-solid fa-spinner fa-spin"></i> Загрузка…</p>
+                </div>
+                <footer class="doc-footer" id="doc-footer"></footer>
+            </article>
         </main>
-    </div>
-    <div class="bg-pattern"></div>
-    <script src="app.js"></script>
-    <script>
-        // Добавляем подсветку синтаксиса после загрузки контента
-        function highlightCode() {
-            document.querySelectorAll('pre code').forEach((block) => {
-                hljs.highlightElement(block);
-            });
-        }
 
-        // Перехватываем функцию loadContent для добавления подсветки
-        const originalLoadContent = window.loadContent;
-        window.loadContent = async function (filePath) {
-            await originalLoadContent(filePath);
-            highlightCode();
-        };
-    </script>
+        <!-- ===== TOC ===== -->
+        <aside class="toc" id="toc" aria-label="На этой странице"></aside>
+    </div>
+
+    <button class="to-top" id="to-top" aria-label="Наверх"><i class="fa-solid fa-arrow-up"></i></button>
+
+    <!-- ===== SEARCH PALETTE ===== -->
+    <div class="palette" id="palette" role="dialog" aria-modal="true" aria-label="Поиск" hidden>
+        <div class="palette-box">
+            <div class="palette-input">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="search" placeholder="Ищу по заголовкам и тексту всех страниц…"
+                    autocomplete="off" spellcheck="false">
+                <kbd>Esc</kbd>
+            </div>
+            <ul class="palette-results" id="search-results" role="listbox"></ul>
+            <div class="palette-hint">
+                <span><kbd>↑</kbd><kbd>↓</kbd> выбор</span>
+                <span><kbd>Enter</kbd> открыть</span>
+                <span><kbd>/</kbd> или <kbd>Ctrl K</kbd> поиск</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=3"></script>
 </body>
 
 </html>

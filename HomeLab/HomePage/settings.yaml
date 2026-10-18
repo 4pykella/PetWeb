@@ -1,15 +1,34 @@
 ---
+# https://gethomepage.dev/configs/settings/
 title: GL Chep
 
 theme: dark # or light
 color: slate
 
-background: 
+background:
   image: https://img.magnific.com/free-photo/sky-sea-april-01-2024_58702-17003.jpg?t=st=1791991194~exp=1791994794~hmac=14e10cdcd21152036f53adcb794720837ce3a8b3499ae507eb867a843688ff6d&w=2000
   blur: sm
-  saturate: 50 
-  brightness: 25 
-  opacity: 50 
-#head
+  saturate: 50
+  brightness: 25
+  opacity: 50
+
 headerStyle: boxed
-language: en
+language: ru
+statusStyle: dot
+useEqualHeights: true
+hideVersion: true
+
+# порядок и раскладка групп сервисов
+layout:
+  Мониторинг:
+    style: row
+    columns: 3
+  PetWeb:
+    style: row
+    columns: 3
+  HomeLab:
+    style: row
+    columns: 4
+  VDS:
+    style: row
+    columns: 2

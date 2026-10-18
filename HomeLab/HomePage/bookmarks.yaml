@@ -14,7 +14,6 @@
         - abbr: HC
           href: https://career.habr.com/
 
-
 - Entertainment:
     - YouTube:
         - icon: youtube.png
@@ -22,3 +21,32 @@
     - Reddit:
         - icon: reddit.png
           href: https://reddit.com/
+
+- Нейросети:
+    - Claude:
+        - icon: si-claude
+          href: https://claude.ai/
+          description: Anthropic
+    - ChatGPT:
+        - abbr: GPT
+          href: https://chatgpt.com/
+          description: OpenAI
+    - Gemini:
+        - icon: si-googlegemini
+          href: https://gemini.google.com/
+          description: Google
+    - Perplexity:
+        - icon: si-perplexity
+          href: https://www.perplexity.ai/
+          description: Поиск с ИИ
+    - DeepSeek:
+        - abbr: DS
+          href: https://chat.deepseek.com/
+    - GigaChat:
+        - abbr: GC
+          href: https://giga.chat/
+          description: Сбер
+    - Hugging Face:
+        - icon: si-huggingface
+          href: https://huggingface.co/
+          description: Модели и датасеты
