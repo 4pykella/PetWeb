@@ -18,10 +18,12 @@ validate:
   image: node:20-alpine
   script:
     - node html/miki/generateFiles.js
+    - node html/music/generatePlaylist.js
     - cd bot && npm ci --omit=dev && node --check index.js
   artifacts:
     paths:
       - html/miki/files.json
+      - html/music/playlist.json
     expire_in: 1 day
 
 docker-build:

@@ -949,3 +949,380 @@ h1 {
 
 .icon-rustdesk { color: #024eff; }
 [data-theme="dark"] .icon-rustdesk { color: #4d82ff; }
+
+/* ===== MUSIC PLAYER (скрытый: Ctrl + Alt + M или «music») ===== */
+.player {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 150;
+    width: 370px;
+    max-height: calc(100vh - 100px);
+    display: flex;
+    flex-direction: column;
+    padding: 0 1.1rem 0.9rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-strong);
+    background: color-mix(in srgb, var(--bg-secondary) 92%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45), var(--glow);
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.player.open {
+    opacity: 1;
+    transform: none;
+}
+
+.player[hidden] {
+    display: none;
+}
+
+.player-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 -1.1rem 0.75rem;
+    padding: 0.45rem 0.6rem 0.45rem 1rem;
+    border-bottom: 1px solid var(--border);
+    border-radius: var(--radius) var(--radius) 0 0;
+    background: var(--bg-primary);
+    font: 0.75rem 'Fira Code', monospace;
+    color: var(--text-secondary);
+}
+
+.player-bar em {
+    flex: 1;
+    font-style: normal;
+}
+
+.player-dots {
+    display: flex;
+    gap: 5px;
+}
+
+.player-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ff5f57;
+}
+
+.player-dots span:nth-child(2) { background: #febc2e; }
+.player-dots span:nth-child(3) { background: #28c840; }
+
+.player-viz {
+    width: 100%;
+    height: 70px;
+    margin-bottom: 0.6rem;
+    border-radius: 10px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+}
+
+.player-now {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    min-width: 0;
+}
+
+.player-disc {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: conic-gradient(from 180deg, var(--accent), var(--neon), var(--accent));
+    color: var(--bg-primary);
+    font-size: 1.6rem;
+}
+
+.player.playing .player-disc i {
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.player-meta {
+    min-width: 0;
+}
+
+.player-meta strong,
+.player-meta small {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-meta strong {
+    color: var(--text-primary);
+}
+
+.player-meta small {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.player-progress,
+.player-volume {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.7rem;
+    font: 0.72rem 'Fira Code', monospace;
+    color: var(--text-secondary);
+}
+
+.player-progress input,
+.player-volume input {
+    flex: 1;
+}
+
+/* ползунки с заливкой до текущего значения (--p) */
+.player input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--neon) var(--p, 0%), var(--border-strong) var(--p, 0%));
+    cursor: pointer;
+}
+
+.player input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--neon);
+    box-shadow: 0 0 8px var(--neon);
+}
+
+.player input[type="range"]::-moz-range-thumb {
+    width: 13px;
+    height: 13px;
+    border: none;
+    border-radius: 50%;
+    background: var(--neon);
+    box-shadow: 0 0 8px var(--neon);
+}
+
+.player-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-top: 0.6rem;
+}
+
+.player-icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.player-icon:hover {
+    color: var(--neon);
+    background: var(--bg-primary);
+}
+
+.player-icon.on {
+    color: var(--neon);
+}
+
+.player-icon.on::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--neon);
+}
+
+.player-icon.one::before {
+    content: '1';
+    position: absolute;
+    top: 3px;
+    right: 4px;
+    font: 700 0.55rem 'Inter', sans-serif;
+    color: var(--neon);
+}
+
+.player-play {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 1.15rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.player-play:hover {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 6px rgba(52, 199, 138, 0.18), var(--glow);
+}
+
+.player.playing .player-play {
+    animation: pulse 2.4s infinite;
+}
+
+.player-list {
+    list-style: none;
+    margin: 0.75rem -0.4rem 0;
+    padding: 0.4rem 0 0;
+    border-top: 1px solid var(--border);
+    overflow-y: auto;
+    min-height: 0;
+    max-height: 220px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+}
+
+.player-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.86rem;
+}
+
+.player-list li:hover {
+    background: var(--bg-primary);
+}
+
+.player-list li.active {
+    background: var(--bg-primary);
+    color: var(--neon);
+}
+
+.player-list .num,
+.player-list .dur {
+    font: 0.72rem 'Fira Code', monospace;
+    color: var(--text-secondary);
+}
+
+.player-list .name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.player-list .name small {
+    margin-left: 0.4rem;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+}
+
+.player-list li.player-empty {
+    cursor: default;
+    color: var(--text-secondary);
+    white-space: normal;
+    font-size: 0.82rem;
+}
+
+.player-hint {
+    margin-top: 0.6rem;
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.player-hint kbd {
+    display: inline-block;
+    padding: 0 0.35em;
+    border-radius: 4px;
+    border: 1px solid var(--border-strong);
+    background: var(--bg-primary);
+    font: 600 0.65rem 'Fira Code', monospace;
+}
+
+/* мини-индикатор, когда плеер скрыт, а музыка играет */
+.player-mini {
+    position: fixed;
+    left: 16px;
+    bottom: 16px;
+    z-index: 140;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    background: var(--bg-secondary);
+    box-shadow: var(--glow);
+    cursor: pointer;
+}
+
+.player-mini[hidden] {
+    display: none;
+}
+
+.eq {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 3px;
+    height: 16px;
+}
+
+.eq i {
+    width: 3px;
+    height: 100%;
+    border-radius: 2px;
+    background: var(--neon);
+    animation: eq 0.9s ease-in-out infinite;
+}
+
+.eq i:nth-child(2) { animation-delay: -0.3s; }
+.eq i:nth-child(3) { animation-delay: -0.6s; }
+
+@keyframes eq {
+    0%, 100% { transform: scaleY(0.3); }
+    50% { transform: scaleY(1); }
+}
+
+.eq i {
+    transform-origin: bottom;
+}
+
+@media (max-width: 600px) {
+    .player {
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        width: auto;
+        max-height: 80vh;
+    }
+
+    .player-list {
+        max-height: 160px;
+    }
+
+    .player-hint {
+        display: none;
+    }
+}

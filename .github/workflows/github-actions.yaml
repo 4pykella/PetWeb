@@ -31,8 +31,10 @@ jobs:
         with:
           node-version: 20
 
-      - name: Generate Miki tree (files.json)
-        run: node html/miki/generateFiles.js
+      - name: Generate Miki tree and music playlist
+        run: |
+          node html/miki/generateFiles.js
+          node html/music/generatePlaylist.js
 
       - name: Check bot syntax
         working-directory: bot
@@ -64,8 +66,10 @@ jobs:
         with:
           path: petweb
 
-      - name: Generate Miki tree (files.json)
-        run: node petweb/html/miki/generateFiles.js
+      - name: Generate Miki tree and music playlist
+        run: |
+          node petweb/html/miki/generateFiles.js
+          node petweb/html/music/generatePlaylist.js
 
       - name: Configure SSH
         env:

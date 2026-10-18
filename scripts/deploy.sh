@@ -16,6 +16,9 @@ docker compose config -q
 
 echo "[2/4] Building and starting containers..."
 docker compose up -d --build --remove-orphans
+# nginx.conf смонтирован отдельным файлом: распаковка архива заменяет файл (новый inode),
+# и запущенный контейнер видит старую версию — пересоздаём nginx, чтобы подхватить конфиг
+docker compose up -d --no-deps --force-recreate nginx
 
 echo "[3/4] Cleaning dangling images..."
 docker image prune -f >/dev/null || true
