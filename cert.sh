@@ -25,7 +25,7 @@ cd "$(dirname "$0")"
 
 DOMAIN="${DOMAIN:-chepykella.ru}"
 ACME_EMAIL="${ACME_EMAIL:-DanilMkrtchian@gmail.com}"
-ACME_DNS_PROVIDER="${ACME_DNS_PROVIDER:-}"
+ACME_DNS_PROVIDER="${ACME_DNS_PROVIDER:-dns_selectel}"   # DNS домена — Selectel
 ACME_ENV_FILE="${ACME_ENV_FILE:-secrets/acme.env}"
 
 CERT_ROOT="$(pwd)/data/certbot/conf"
@@ -45,8 +45,8 @@ manual() {
 }
 
 auto() {
-  if [ -z "$ACME_DNS_PROVIDER" ] || [ ! -s "$ACME_ENV_FILE" ]; then
-    warn "ACME_DNS_PROVIDER или $ACME_ENV_FILE не заданы — пропускаю выпуск сертификата"
+  if [ ! -s "$ACME_ENV_FILE" ]; then
+    warn "$ACME_ENV_FILE пуст или не найден (ключи API $ACME_DNS_PROVIDER) — пропускаю выпуск сертификата"
     return 1
   fi
 

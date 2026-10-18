@@ -110,12 +110,12 @@ jobs:
             echo "GRAFANA_ADMIN_PASSWORD=$GRAFANA_ADMIN_PASSWORD"
             echo "CODE_SERVER_PASSWORD=$CODE_SERVER_PASSWORD"
             echo "ACME_EMAIL=$ACME_EMAIL"
-            echo "ACME_DNS_PROVIDER=$ACME_DNS_PROVIDER"
+            echo "ACME_DNS_PROVIDER=${ACME_DNS_PROVIDER:-dns_selectel}"
           } > .env
           mkdir -p secrets
-          printf '%s\n' "$ACME_DNS_ENV" > secrets/acme.env
-          if [ -z "$ACME_DNS_PROVIDER" ] || [ -z "$ACME_DNS_ENV" ]; then
-            echo "::warning::ACME_DNS_PROVIDER/ACME_DNS_ENV не заданы — SSL выпускаться не будет, только выгрузка"
+          if [ -n "$ACME_DNS_ENV" ]; then printf '%s\n' "$ACME_DNS_ENV" > secrets/acme.env; else : > secrets/acme.env; fi
+          if [ -z "$ACME_DNS_ENV" ]; then
+            echo "::warning::ACME_DNS_ENV не задан — SSL выпускаться не будет, только выгрузка"
           fi
 
       - name: Upload project

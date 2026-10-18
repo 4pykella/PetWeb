@@ -19,10 +19,10 @@ services:
   nginx-exporter:
     image: nginx/nginx-prometheus-exporter:latest
     container_name: nginx-exporter
-    ports:
-      - "9113:9113"
-    environment:
-      - NGINX_STATUS_URL=http://nginx/nginx_status
+    # новые версии экспортера читают адрес только из флага (env игнорируется);
+    # порт наружу не публикуем — Prometheus ходит по docker-сети
+    command:
+      - --nginx.scrape-uri=http://nginx/nginx_status
     depends_on:
       - nginx
     networks:
