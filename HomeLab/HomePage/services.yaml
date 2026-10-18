@@ -72,7 +72,7 @@
         description: Запросы и соединения
         server: local
         container: nginx
-        siteMonitor: http://nginx/
+        siteMonitor: http://nginx/nginx_status
         widget:
           type: prometheusmetric
           url: http://prometheus:9090
@@ -124,7 +124,7 @@
         description: www.chepykella.ru
         server: local
         container: nginx
-        siteMonitor: http://nginx/
+        siteMonitor: http://nginx/nginx_status
     - Miki:
         icon: mdi-book-open-page-variant
         href: https://www.chepykella.ru/miki/
