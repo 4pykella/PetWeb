@@ -589,6 +589,7 @@ kbd {
 }
 
 .markdown th {
+    white-space: nowrap;
     background: var(--bg-primary);
     color: var(--text-primary);
     font-weight: 600;
