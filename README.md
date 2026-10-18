@@ -8,6 +8,10 @@
 
 ---
 
+> 📘 **[Инструкция по проекту](html/miki/docs/PetWeb/Инструкция.md)**: где лежат файлы, как работать через git и прямо на сервере (code-server), куда добавлять музыку, `.env`, SSL и Homepage. Она же есть в Miki: *PetWeb → Инструкция*.
+
+---
+
 ## 📋 Содержание
 
 - [Описание](#описание)
@@ -15,6 +19,7 @@
 - [Технологии](#технологии)
 - [Структура репозитория](#структура-репозитория)
 - [CI/CD](#cicd)
+- [Пароли и .env](#пароли-и-env)
 - [SSL](#ssl)
 - [Telegram-бот графика](#telegram-бот-графика)
 - [Miki](#miki)
@@ -40,7 +45,7 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
                  │  validate → build images → files.json для Miki
                  ▼
               SSH deploy ──► /opt/petweb на сервере
-                 │  .env из секретов
+                 │  .env с паролями уже лежит на сервере
                  ▼
          docker compose up -d --build  +  health-check
 
@@ -104,7 +109,7 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
 Пайплайн запускается на push в `main` (и вручную через *Run workflow*). Для pull request выполняется только проверка.
 
 1. **Build & validate** — генерация `html/miki/files.json`, проверка синтаксиса бота и shell-скриптов, `docker compose config`, сборка образов `nginx` и `workdays-bot`.
-2. **Deploy** — `.env` собирается из секретов, проект уходит архивом по SSH в `/opt/petweb`, затем на сервере запускается [`scripts/deploy.sh`](scripts/deploy.sh):
+2. **Deploy** — проект уходит архивом по SSH в `/opt/petweb`, затем на сервере запускается [`scripts/deploy.sh`](scripts/deploy.sh). `.env` с паролями CI не трогает, он лежит только на сервере:
    - `docker compose up -d --build --remove-orphans`;
    - проверка, что nginx запущен и отвечает по HTTPS; остальные сервисы — предупреждением.
 
@@ -116,14 +121,22 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
 | `SSH_USERNAME` | ✅ | пользователь деплоя (в группе `docker`) |
 | `SSH_PRIVATE_KEY` | ✅ | приватный ключ |
 | `SSH_PORT` | | порт SSH, по умолчанию `22` |
-| `BOT_TOKEN` | | токен Telegram-бота от @BotFather |
-| `BOT_ADMIN_IDS` | | Telegram ID, которым разрешено менять отпуска (через запятую) |
-| `GRAFANA_ADMIN_PASSWORD` | | пароль admin в Grafana |
-| `CODE_SERVER_PASSWORD` | | пароль code-server |
 
 Переменная репозитория `DOMAIN` (*Variables*) — по умолчанию `chepykella.ru`.
 
 GitLab: тот же пайплайн в [`.gitlab-ci.yml`](.gitlab-ci.yml), настройка — в [гайде по GitLab](html/miki/docs/GitLab/Гайд.md).
+
+---
+
+## Пароли и `.env`
+
+Все пароли и токены (Grafana, code-server, бот, ключи виджетов Homepage) лежат в `/opt/petweb/.env` **только на сервере**. В git есть шаблон [`.env.example`](.env.example) с описанием каждой переменной:
+
+```bash
+cd /opt/petweb && cp .env.example .env && nano .env && chmod 600 .env && docker compose up -d
+```
+
+Без обязательных паролей (`GRAFANA_ADMIN_PASSWORD`, `CODE_SERVER_PASSWORD`) `docker compose` не запустится и подскажет, что заполнить.
 
 ---
 
@@ -207,7 +220,7 @@ Markdown-вики без бэкенда: файлы из `html/miki/docs/` → `
 git clone https://github.com/4pykella/PetWeb.git
 cd PetWeb
 
-touch .env                            # или заполни переменными из таблицы выше
+cp .env.example .env                  # заполни пароли
 node html/miki/generateFiles.js       # дерево Miki
 ./cert.sh                             # опционально: настоящий сертификат вручную
 

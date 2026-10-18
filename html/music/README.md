@@ -17,4 +17,4 @@
    ```
    nginx сам отдаёт список файлов папки, перезапуск не нужен. Деплой их не удалит.
 
-Локально (без nginx) плеер читает `playlist.json`: `node html/music/generatePlaylist.js`.
+Локально (без nginx) плеер читает `playlist.json`: `node html/music/generatePlaylist.js`, на сервере — `bash scripts/regen.sh`.

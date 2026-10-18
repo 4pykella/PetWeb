@@ -47,7 +47,7 @@ jobs:
 
       - name: Validate docker compose
         run: |
-          touch .env
+          cp .env.example .env
           docker compose config -q
 
       - name: Build Docker images
@@ -92,37 +92,17 @@ jobs:
           chmod 600 ~/.ssh/config
           ssh deploy "echo 'SSH connection successful'"
 
-      # .env собирается из секретов репозитория.
-      # Пустые секреты → в compose сработают значения по умолчанию.
-      - name: Render .env
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          BOT_ADMIN_IDS: ${{ secrets.BOT_ADMIN_IDS }}
-          GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
-          CODE_SERVER_PASSWORD: ${{ secrets.CODE_SERVER_PASSWORD }}
-          DOMAIN: ${{ vars.DOMAIN || 'chepykella.ru' }}
-        run: |
-          cd petweb
-          umask 077
-          {
-            echo "DOMAIN=$DOMAIN"
-            echo "BOT_TOKEN=$BOT_TOKEN"
-            echo "BOT_ADMIN_IDS=$BOT_ADMIN_IDS"
-            echo "GRAFANA_ADMIN_PASSWORD=$GRAFANA_ADMIN_PASSWORD"
-            echo "CODE_SERVER_PASSWORD=$CODE_SERVER_PASSWORD"
-          } > .env
-
+      # .env с паролями лежит только на сервере (шаблон — .env.example) и не перезаписывается
       - name: Upload project
         run: |
           tar -C petweb --exclude='./.git' --exclude='./.github' -czf /tmp/petweb.tar.gz .
           ssh deploy "mkdir -p '${{ env.DEPLOY_PATH }}'"
           scp /tmp/petweb.tar.gz deploy:/tmp/petweb.tar.gz
-          ssh deploy "tar -xzf /tmp/petweb.tar.gz -C '${{ env.DEPLOY_PATH }}' && rm -f /tmp/petweb.tar.gz \
-            && chmod 600 '${{ env.DEPLOY_PATH }}/.env'"
+          ssh deploy "tar -xzf /tmp/petweb.tar.gz -C '${{ env.DEPLOY_PATH }}' && rm -f /tmp/petweb.tar.gz"
 
       - name: Deploy
         run: ssh deploy "bash '${{ env.DEPLOY_PATH }}/scripts/deploy.sh'"
 
       - name: Cleanup SSH
         if: always()
-        run: rm -rf ~/.ssh /tmp/petweb.tar.gz petweb/.env
+        run: rm -rf ~/.ssh /tmp/petweb.tar.gz

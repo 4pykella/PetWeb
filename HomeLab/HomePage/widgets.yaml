@@ -1,17 +1,41 @@
 ---
-# For configuration options and examples, please see:
-# https://gethomepage.dev/configs/info-widgets/
+# Информационные виджеты в шапке. https://gethomepage.dev/configs/info-widgets/
 
 - logo:
-    # icon: https://40k.gallery/wp-content/uploads/2026/09/Ironjawz.svg # optional
     icon: https://www.svgrepo.com/show/442994/brand-cthulhu.svg
 
 - resources:
+    label: Archimedes
+    expanded: true
     cpu: true
     memory: true
-    disk: /
     cputemp: true
+    tempmin: 30
+    tempmax: 85
+    units: metric
     uptime: true
+    refresh: 3000
+
+- resources:
+    label: Диск
+    expanded: true
+    disk: /
+
+- datetime:
+    text_size: md
+    locale: ru
+    format:
+      dateStyle: long
+      timeStyle: short
+      hourCycle: h23
+
+- openmeteo:
+    label: Санкт-Петербург
+    latitude: 59.9386
+    longitude: 30.3141
+    timezone: Europe/Moscow
+    units: metric
+    cache: 15
 
 - search:
     provider: google

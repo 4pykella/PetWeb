@@ -2,7 +2,7 @@
 # Переменные (Settings → CI/CD → Variables):
 #   SSH_PRIVATE_KEY  (File, Protected, Masked)  — приватный ключ деплоя
 #   SSH_HOST, SSH_USER, SSH_PORT (опц.)
-#   BOT_TOKEN, BOT_ADMIN_IDS, GRAFANA_ADMIN_PASSWORD, CODE_SERVER_PASSWORD
+# Пароли и токены — в /opt/petweb/.env на сервере (шаблон .env.example), CI их не трогает.
 # Подробности: html/miki/docs/GitLab/Гайд.md
 
 stages:
@@ -34,7 +34,7 @@ docker-build:
   variables:
     DOCKER_TLS_CERTDIR: "/certs"
   script:
-    - touch .env
+    - cp .env.example .env
     - docker compose config -q
     - docker compose build --pull nginx workdays-bot
 
@@ -55,20 +55,10 @@ deploy:
     - ssh-keyscan -p "${SSH_PORT:-22}" "$SSH_HOST" >> ~/.ssh/known_hosts
     - printf 'Host deploy\n  HostName %s\n  Port %s\n  User %s\n  IdentityFile ~/.ssh/id_deploy\n  BatchMode yes\n' "$SSH_HOST" "${SSH_PORT:-22}" "$SSH_USER" > ~/.ssh/config
   script:
-    - umask 077
-    - |
-      cat > .env <<EOF
-      DOMAIN=$DOMAIN
-      BOT_TOKEN=${BOT_TOKEN:-}
-      BOT_ADMIN_IDS=${BOT_ADMIN_IDS:-}
-      GRAFANA_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-}
-      CODE_SERVER_PASSWORD=${CODE_SERVER_PASSWORD:-}
-      EOF
-    - sed -i 's/^ *//' .env
     - tar --exclude='./.git' -czf /tmp/petweb.tar.gz .
     - ssh deploy "mkdir -p '$DEPLOY_PATH'"
     - scp /tmp/petweb.tar.gz deploy:/tmp/petweb.tar.gz
-    - ssh deploy "tar -xzf /tmp/petweb.tar.gz -C '$DEPLOY_PATH' && rm -f /tmp/petweb.tar.gz && chmod 600 '$DEPLOY_PATH/.env'"
+    - ssh deploy "tar -xzf /tmp/petweb.tar.gz -C '$DEPLOY_PATH' && rm -f /tmp/petweb.tar.gz"
     - ssh deploy "bash '$DEPLOY_PATH/scripts/deploy.sh'"
   after_script:
-    - rm -rf ~/.ssh .env /tmp/petweb.tar.gz
+    - rm -rf ~/.ssh /tmp/petweb.tar.gz

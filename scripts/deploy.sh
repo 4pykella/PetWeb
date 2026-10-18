@@ -1,10 +1,15 @@
 #!/bin/bash
 # deploy.sh — запускается на сервере из CI/CD (GitHub Actions / GitLab CI).
-# Ожидает, что проект уже распакован в каталог деплоя, а .env положен рядом.
+# Ожидает, что проект уже распакован в каталог деплоя.
+# .env с паролями живёт ТОЛЬКО на сервере (шаблон — .env.example), CI его не трогает.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-[ -f .env ] && set -a && . ./.env && set +a
+if [ ! -f .env ]; then
+  echo "ERROR: нет $(pwd)/.env — скопируй .env.example в .env и заполни пароли"
+  exit 1
+fi
+set -a && . ./.env && set +a
 DOMAIN="${DOMAIN:-chepykella.ru}"
 
 echo "======================================"
@@ -14,11 +19,17 @@ echo "======================================"
 echo "[1/4] Validating docker compose..."
 docker compose config -q
 
+# code-server работает от CODE_SERVER_UID — отдаём ему файлы проекта,
+# чтобы их можно было править прямо в браузере (data/ с сертификатами не трогаем)
+find . -mindepth 1 -maxdepth 1 ! -name data ! -name code-server-config \
+  -exec chown -R "${CODE_SERVER_UID:-1000}:${CODE_SERVER_GID:-1000}" {} + 2>/dev/null || true
+chmod 600 .env
+
 echo "[2/4] Building and starting containers..."
 docker compose up -d --build --remove-orphans
-# nginx.conf смонтирован отдельным файлом: распаковка архива заменяет файл (новый inode),
-# и запущенный контейнер видит старую версию — пересоздаём nginx, чтобы подхватить конфиг
-docker compose up -d --no-deps --force-recreate nginx
+# nginx.conf и prometheus.yml смонтированы отдельными файлами: распаковка архива заменяет
+# файл (новый inode), и запущенный контейнер видит старую версию — пересоздаём их
+docker compose up -d --no-deps --force-recreate nginx prometheus
 
 echo "[3/4] Cleaning dangling images..."
 docker image prune -f >/dev/null || true

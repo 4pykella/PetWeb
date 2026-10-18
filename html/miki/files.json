@@ -33,6 +33,9 @@
     },
     "Модель_OSI": "docs/Network/Модель_OSI.md"
   },
+  "PetWeb": {
+    "Инструкция": "docs/PetWeb/Инструкция.md"
+  },
   "roadmap": "docs/roadmap.md",
   "Telegram": "docs/Telegram.md",
   "Utilities": {

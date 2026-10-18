@@ -1,10 +1,7 @@
 ---
-# For configuration options and examples, please see:
+# Docker-интеграция: статус, CPU и память контейнеров в карточках сервисов.
+# Сокет примонтирован в контейнер homepage (docker-compose.yml).
 # https://gethomepage.dev/configs/docker/
 
-# my-docker:
-#   host: 127.0.0.1
-#   port: 2375
-
-# my-docker:
-#   socket: /var/run/docker.sock
+local:
+  socket: /var/run/docker.sock
