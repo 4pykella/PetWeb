@@ -1,1 +1,6 @@
 .env
+secrets/
+data/
+code-server-config/
+node_modules/
+bot/vacations.json

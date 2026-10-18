@@ -37,21 +37,6 @@
     </div>
     <div class="bg-pattern"></div>
     <script src="app.js"></script>
-    <script>
-        // Добавляем подсветку синтаксиса после загрузки контента
-        function highlightCode() {
-            document.querySelectorAll('pre code').forEach((block) => {
-                hljs.highlightElement(block);
-            });
-        }
-
-        // Перехватываем функцию loadContent для добавления подсветки
-        const originalLoadContent = window.loadContent;
-        window.loadContent = async function (filePath) {
-            await originalLoadContent(filePath);
-            highlightCode();
-        };
-    </script>
 </body>
 
 </html>

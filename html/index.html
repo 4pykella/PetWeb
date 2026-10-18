@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Junior DevOps Engineer</title>
+    <title>Мкртчян Данил — DevOps Engineer</title>
+    <meta name="description" content="Сайт-визитка и HomeLab: Docker, Nginx, CI/CD, мониторинг, Kubernetes.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@400;600&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="favicon.svg">
@@ -14,277 +15,311 @@
 
 <body>
     <div class="bg-pattern"></div>
+    <div class="bg-grid"></div>
+
+    <nav class="header-buttons" aria-label="Быстрые ссылки">
+        <a href="https://home.chepykella.ru" class="theme-btn" target="_blank" rel="noopener noreferrer"
+            aria-label="Homepage — дашборд HomeLab" data-tooltip="Homepage">
+            <i class="fa-solid fa-house-signal"></i>
+        </a>
+        <a href="/miki/index.html" class="theme-btn" aria-label="Открыть вики" data-tooltip="Miki">
+            <i class="fa-solid fa-book-open"></i>
+        </a>
+        <button id="theme-toggle" class="theme-btn" aria-label="Сменить тему" data-tooltip="Тема">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+    </nav>
 
     <main class="container">
-        <div class="header-buttons">
-            <button id="wiki-toggle" class="theme-btn" aria-label="Открыть вики"
-                onclick="window.location.href='https://www.chepykella.ru/miki/index.html'">📖</button>
-            <button id="theme-toggle" class="theme-btn" aria-label="Сменить тему">🌙</button>
-        </div>
 
-        <header class="card glow">
+        <!-- ===== HERO ===== -->
+        <header class="card hero glow">
             <div class="avatar">
-                <img src="../images/avatar.jpeg" alt="DevOps Engineer" class="avatar-img">
+                <img src="/images/avatar.jpeg" alt="Мкртчян Данил" class="avatar-img">
+                <span class="status-dot" title="online"></span>
             </div>
             <h1 class="neon-text">Мкртчян Данил</h1>
             <p class="subtitle terminal-text">$ Junior DevOps Engineer</p>
+            <p class="hero-lead">
+                Строю инфраструктуру как код: от Docker Compose на VPS до кластера Kubernetes в домашней лаборатории
+                на Proxmox. Этот сайт — живой пример: он сам собирается, получает SSL и деплоится из git.
+            </p>
+            <div class="hero-badges">
+                <span class="badge"><i class="fa-brands fa-docker"></i> 10+ контейнеров</span>
+                <span class="badge"><i class="fa-solid fa-lock"></i> wildcard SSL</span>
+                <span class="badge"><i class="fa-solid fa-rocket"></i> CI/CD on push</span>
+                <span class="badge"><i class="fa-solid fa-chart-line"></i> мониторинг 24/7</span>
+            </div>
             <div class="social">
-                <a href="https://github.com/4pykella" target="_blank" class="social-btn"><i
-                        class="fab fa-github"></i></a>
-                <a href="https://t.me/Chepykella" target="_blank" class="social-btn"><i class="fab fa-telegram"></i></a>
+                <a href="https://github.com/4pykella" target="_blank" rel="noopener noreferrer" class="social-btn"
+                    aria-label="GitHub"><i class="fab fa-github"></i></a>
+                <a href="https://t.me/Chepykella" target="_blank" rel="noopener noreferrer" class="social-btn"
+                    aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+                <a href="mailto:chepykella@yandex.ru" class="social-btn" aria-label="Email"><i
+                        class="fas fa-envelope"></i></a>
             </div>
         </header>
 
-        <section id="about" class="card console">
-            <h2><span class="prompt">></span> whoami</h2>
+        <!-- ===== WHOAMI ===== -->
+        <section class="card console">
+            <div class="console-bar"><span></span><span></span><span></span><em>~/whoami</em></div>
+            <h2><span class="prompt">&gt;</span> whoami</h2>
             <div class="console-text">
-                <p> Привет! Я Junior DevOps Engineer с опытом в:</p>
+                <p>Привет! Я Junior DevOps Engineer с опытом в:</p>
                 <ul class="console-list">
-                    <li> Настройке CI/CD (GitHub Actions)</li>
-                    <li> Работе с облаками (Selectel)</li>
-                    <li> Контейнеризации (Docker и Docker-compose)</li>
-                    <li> Чуть-чуть программирование (JS, C#, C++)</li>
+                    <li>CI/CD: GitHub Actions и GitLab CI, автодеплой по SSH</li>
+                    <li>Контейнеризации: Docker, Docker Compose, multi-stage сборки</li>
+                    <li>Веб-серверах: Nginx, reverse proxy, TLS (Let's Encrypt, DNS-01)</li>
+                    <li>Мониторинге: Prometheus, Grafana, Zabbix, экспортеры</li>
+                    <li>Облаках и HomeLab: Selectel, Proxmox, TrueNAS, OpenWRT, MikroTik</li>
+                    <li>Немного кода: Bash, JavaScript / Node.js, C#, C++</li>
                 </ul>
+                <p class="console-now"><span class="prompt">$</span> сейчас изучаю: Kubernetes на нескольких нодах
+                    Proxmox → <a href="/miki/index.html#docs/roadmap.md">роадмап</a></p>
             </div>
         </section>
 
-        <section id="about" class="card console">
-            <h2><i class="fa-solid fa-circle-nodes"></i> Docker</h2>
-            <div class="console-text">
-                <p> На этом сервере подняты такие сервисы как:</p>
+        <!-- ===== PIPELINE ===== -->
+        <section class="card">
+            <h2 class="section-title"><i class="fa-solid fa-diagram-project"></i> Как устроен этот сайт</h2>
+            <p class="section-lead">Каждый <code>git push</code> в <code>main</code> проходит весь путь до продакшена
+                без ручных действий.</p>
+            <ol class="pipeline">
+                <li class="pipe-step">
+                    <i class="fa-brands fa-git-alt"></i>
+                    <strong>git push</strong>
+                    <small>GitHub / GitLab</small>
+                </li>
+                <li class="pipe-step">
+                    <i class="fa-solid fa-gears"></i>
+                    <strong>CI</strong>
+                    <small>валидация, сборка образов, дерево Miki</small>
+                </li>
+                <li class="pipe-step">
+                    <i class="fa-solid fa-key"></i>
+                    <strong>SSH deploy</strong>
+                    <small>.env из секретов → сервер</small>
+                </li>
+                <li class="pipe-step">
+                    <i class="fa-solid fa-lock"></i>
+                    <strong>SSL DNS-01</strong>
+                    <small>acme.sh → *.chepykella.ru</small>
+                </li>
+                <li class="pipe-step">
+                    <i class="fa-brands fa-docker"></i>
+                    <strong>compose up</strong>
+                    <small>health-check nginx</small>
+                </li>
+            </ol>
+        </section>
+
+        <!-- ===== TECHNOLOGIES ===== -->
+        <section id="skills" class="card wide">
+            <h2 class="section-title"><i class="fa-solid fa-layer-group"></i> Технологии проекта</h2>
+            <p class="section-lead">Всё, на чём работает PetWeb и домашняя лаборатория.</p>
+
+            <div class="tech-group">
+                <h3><span class="prompt">#</span> Инфраструктура и деплой</h3>
                 <div class="tech-grid">
-                    <a href="https://grafana.chepykella.ru" class="tech-card" target="_blank" rel="noopener noreferrer">
-                        <img src="/images/tech-icons/grafana.svg" alt="Grafana">
-                        <span>Grafana</span>
-                    </a>
-                    <a href="https://prometheus.chepykella.ru" class="tech-card" target="_blank"
-                        rel="noopener noreferrer">
-                        <img src="/images/tech-icons/prometheus.svg" alt="Prometheus">
-                        <span>Prometheus</span>
-                    </a>
-                    <a href="https://www.chepykella.ru/portainer" class="tech-card" target="_blank"
-                        rel="noopener noreferrer">
-                        <img src="/images/tech-icons/portainer.svg" alt="Portainer">
-                        <span>Portainer</span>
-                    </a>
-                    <a href="https://rustdesk.com/" class="tech-card" target="_blank" rel="noopener noreferrer">
-                        <img src="/images/tech-icons/rustdesk.svg" alt="Rustdesk">
-                        <span>Rustdesk</span>
-                    </a>
+                    <div class="tech-card"><img src="/images/tech-icons/docker.svg" alt=""><span>Docker</span><small>Compose, multi-stage</small></div>
+                    <div class="tech-card"><img src="/images/tech-icons/nginx.svg" alt=""><span>Nginx</span><small>reverse proxy, TLS</small></div>
+                    <div class="tech-card"><img src="/images/tech-icons/github.svg" alt="" class="icon-invert"><span>GitHub Actions</span><small>CI/CD</small></div>
+                    <div class="tech-card"><i class="fa-brands fa-gitlab icon-gitlab"></i><span>GitLab CI</span><small>CI/CD, registry</small></div>
+                    <div class="tech-card"><img src="/images/tech-icons/letsencrypt.svg" alt=""><span>Let's Encrypt</span><small>acme.sh, DNS-01</small></div>
+                    <div class="tech-card"><img src="/images/tech-icons/bash.svg" alt=""><span>Bash</span><small>скрипты деплоя</small></div>
+                    <div class="tech-card"><img src="/images/tech-icons/Selectel.svg" alt=""><span>Selectel</span><small>VPS, DNS</small></div>
+                    <div class="tech-card"><i class="fa-brands fa-linux icon-linux"></i><span>Linux</span><small>Ubuntu, systemd</small></div>
+                </div>
+            </div>
+
+            <div class="tech-group">
+                <h3><span class="prompt">#</span> Мониторинг</h3>
+                <div class="tech-grid">
+                    <div class="tech-card"><img src="/images/tech-icons/prometheus.svg" alt=""><span>Prometheus</span><small>сбор метрик</small></div>
+                    <div class="tech-card"><img src="/images/tech-icons/grafana.svg" alt=""><span>Grafana</span><small>дашборды</small></div>
+                    <div class="tech-card"><i class="fa-solid fa-gauge-high icon-accent"></i><span>Node Exporter</span><small>метрики хоста</small></div>
+                    <div class="tech-card"><i class="fa-solid fa-wave-square icon-accent"></i><span>Nginx Exporter</span><small>метрики nginx</small></div>
+                    <div class="tech-card"><img src="/images/tech-icons/zabbix.svg" alt=""><span>Zabbix</span><small>сеть, железо</small></div>
+                </div>
+            </div>
+
+            <div class="tech-group">
+                <h3><span class="prompt">#</span> Сервисы и приложения</h3>
+                <div class="tech-grid">
+                    <div class="tech-card"><img src="/images/tech-icons/portainer.svg" alt=""><span>Portainer</span><small>управление Docker</small></div>
+                    <div class="tech-card"><i class="fa-solid fa-table-cells-large icon-accent"></i><span>Homepage</span><small>дашборд HomeLab</small></div>
+                    <div class="tech-card"><i class="fa-solid fa-code icon-accent"></i><span>code-server</span><small>VS Code в браузере</small></div>
+                    <div class="tech-card"><img src="/images/tech-icons/nodejs.svg" alt=""><span>Node.js</span><small>Telegram-бот графика</small></div>
+                    <div class="tech-card"><i class="fa-brands fa-markdown icon-accent"></i><span>Miki</span><small>Markdown-вики</small></div>
+                    <div class="tech-card"><img src="/images/tech-icons/javascript.svg" alt=""><span>HTML / CSS / JS</span><small>этот сайт</small></div>
+                    <div class="tech-card"><img src="/images/tech-icons/postgresql.svg" alt=""><span>PostgreSQL</span><small>БД проектов</small></div>
+                </div>
+            </div>
+
+            <div class="tech-group">
+                <h3><span class="prompt">#</span> HomeLab и сеть</h3>
+                <div class="tech-grid">
+                    <div class="tech-card"><i class="fa-solid fa-server icon-proxmox"></i><span>Proxmox VE</span><small>виртуализация</small></div>
+                    <div class="tech-card"><i class="fa-solid fa-hard-drive icon-truenas"></i><span>TrueNAS</span><small>NAS, NFS</small></div>
+                    <div class="tech-card"><i class="fa-solid fa-cloud icon-nextcloud"></i><span>Nextcloud</span><small>своё облако</small></div>
+                    <div class="tech-card"><i class="fa-solid fa-wifi icon-accent"></i><span>OpenWRT</span><small>роутер</small></div>
+                    <div class="tech-card"><img src="/images/tech-icons/mikrotik.svg" alt="" class="icon-invert"><span>MikroTik</span><small>RouterOS</small></div>
+                    <div class="tech-card"><i class="fa-solid fa-shield-halved icon-wg"></i><span>WireGuard</span><small>VPN, VDS</small></div>
+                    <div class="tech-card"><i class="fa-solid fa-display icon-rustdesk"></i><span>RustDesk</span><small>удалённый доступ</small></div>
+                </div>
+            </div>
+
+            <div class="tech-group learning">
+                <h3><span class="prompt">#</span> В изучении <a class="inline-link" href="/miki/index.html#docs/roadmap.md">роадмап <i class="fa-solid fa-arrow-right"></i></a></h3>
+                <div class="tech-grid">
+                    <div class="tech-card"><img src="/images/tech-icons/kubernets.svg" alt=""><span>Kubernetes</span><small>kubeadm, multi-node</small></div>
+                    <div class="tech-card"><i class="fa-solid fa-dharmachakra icon-k8s"></i><span>Helm</span><small>чарты</small></div>
+                    <div class="tech-card"><i class="fa-solid fa-arrows-rotate icon-accent"></i><span>Argo CD</span><small>GitOps</small></div>
+                    <div class="tech-card"><img src="/images/tech-icons/ansible.svg" alt=""><span>Ansible</span><small>конфигурация</small></div>
+                    <div class="tech-card"><i class="fa-solid fa-cubes icon-terraform"></i><span>Terraform</span><small>VM в Proxmox</small></div>
                 </div>
             </div>
         </section>
 
-        <section id="skills" class="card">
-            <h2 class="gradient-text">stack.sh</h2>
-            <div class="tech-grid">
-                <div class="tech-card">
-                    <img src="/images/tech-icons/docker.svg" alt="Docker">
-                    <span>Docker</span>
-                </div>
-
-                <div class="tech-card">
-                    <img src="/images/tech-icons/nginx.svg" alt="Nginx">
-                    <span>Nginx</span>
-                </div>
-                <div class="tech-card">
-                    <img src="/images/tech-icons/Selectel.svg" alt="Selectel">
-                    <span>Selectel</span>
-                </div>
-                <div class="tech-card">
-                    <img src="/images/tech-icons/npm.svg" alt="npm">
-                    <span>npm</span>
-                </div>
-                <div class="tech-card">
-                    <img src="/images/tech-icons/zabbix.svg" alt="npm">
-                    <span>Zabbix</span>
-                </div>
-                <!--
-                <div class="tech-card">
-                    <img src="../images/tech-icons/ansible.svg" alt="npm">
-                    <span>Ansible</span>
-                </div>
-                <div class="tech-card">
-                    <img src="../images/tech-icons/prometheus.svg" alt="Prometheus">
-                    <span>Prometheus</span>
-                </div>
-            -->
-                <!--                
-                <div class="tech-card">
-                    <img src="../images/tech-icons/kubernets.svg" alt="Kubernetes">
-                    <span>K8s</span>
-                </div>-->
+        <!-- ===== LIVE SERVICES ===== -->
+        <section class="card">
+            <h2 class="section-title"><i class="fa-solid fa-circle-nodes"></i> Запущено на сервере</h2>
+            <p class="section-lead">Живые сервисы этого стенда — всё за одним nginx и одним wildcard-сертификатом.</p>
+            <div class="services-grid">
+                <a href="https://home.chepykella.ru" class="service" target="_blank" rel="noopener noreferrer">
+                    <i class="fa-solid fa-house-signal"></i><span>Homepage</span><small>home.chepykella.ru</small>
+                </a>
+                <a href="/miki/index.html" class="service">
+                    <i class="fa-solid fa-book-open"></i><span>Miki</span><small>/miki</small>
+                </a>
+                <a href="https://grafana.chepykella.ru" class="service" target="_blank" rel="noopener noreferrer">
+                    <img src="/images/tech-icons/grafana.svg" alt=""><span>Grafana</span><small>grafana.chepykella.ru</small>
+                </a>
+                <a href="https://prometheus.chepykella.ru" class="service" target="_blank" rel="noopener noreferrer">
+                    <img src="/images/tech-icons/prometheus.svg" alt=""><span>Prometheus</span><small>prometheus.chepykella.ru</small>
+                </a>
+                <a href="https://www.chepykella.ru/portainer/" class="service" target="_blank" rel="noopener noreferrer">
+                    <img src="/images/tech-icons/portainer.svg" alt=""><span>Portainer</span><small>/portainer</small>
+                </a>
+                <a href="https://github.com/4pykella/PetWeb" class="service" target="_blank" rel="noopener noreferrer">
+                    <i class="fa-brands fa-github"></i><span>Исходники</span><small>github.com/4pykella</small>
+                </a>
             </div>
         </section>
 
-        <section id="projects" class="card">
-            <h2><i class="fa-solid fa-code-branch"></i> Projects</h2>
+        <!-- ===== PROJECTS ===== -->
+        <section id="projects" class="card wide">
+            <h2 class="section-title"><i class="fa-solid fa-code-branch"></i> Проекты</h2>
 
             <div class="projects-grid">
-                <div class="project-card terminal-glow">
+                <article class="project-card">
                     <div class="project-header">
                         <div class="project-title">
-                            <i class="fas fa-server project-icon"></i>
-                            <h3 class="neon-text">TG_bot для университета</h3>
-                        </div>
-                        <span class="project-badge fullstack">FullStack</span>
-                    </div>
-                    <p class="project-description">
-                        Бот для бронирования аудиторий, двухфактороной регистрацией и выдачей кодов авторизации Wi-fi.
-                        Все обернуто в докер контейнеры для простоты развертывания и автоматической выгрузкой на сервер.
-
-                    </p>
-                    <div class="project-tech">
-                        <span class="tech-tag"><img src="/images/tech-icons/docker.svg" alt="Docker">Docker</span>
-                        <span class="tech-tag"><img src="/images/tech-icons/nodejs.svg" alt="Node.js">Node.js</span>
-                        <span class="tech-tag"><img src="/images/tech-icons/postgresql.svg"
-                                alt="PostgreSQL">PostgreSQL</span>
-                    </div>
-                </div>
-                <div class="project-card terminal-glow">
-                    <div class="project-header">
-                        <div class="project-title">
-                            <i class="fas fa-chart-line project-icon"></i>
-                            <h3 class="neon-text">Unispb</h3>
-                        </div>
-                        <span class="project-badge monitoring">Monitoring</span>
-                    </div>
-                    <p class="project-description">
-                        Настройка сервера для лаборатории и внутренних процессов, перевод на новое сетевое оборудование
-                        и настройка мониторинга.
-                    </p>
-                    <div class="project-tech">
-                        <span class="tech-tag"><img src="/images/tech-icons/docker.svg" alt="Docker">Docker</span>
-                        <span class="tech-tag"><img src="/images/tech-icons/mikrotik.svg" alt="MikroTik">MikroTik</span>
-                        <span class="tech-tag"><img src="/images/tech-icons/zabbix.svg" alt="Zabbix">Zabbix</span>
-                    </div>
-                </div>
-                <!--
-                <!-- Проект 1 
-                <div class="project-card terminal-glow">
-                    <div class="project-header">
-                        <div class="project-title">
-                            <i class="fas fa-rocket project-icon"></i>
-                            <h3 class="neon-text">CI/CD Pipeline</h3>
+                            <i class="fas fa-globe project-icon"></i>
+                            <h3>PetWeb</h3>
                         </div>
                         <span class="project-badge devops">DevOps</span>
                     </div>
                     <p class="project-description">
-                        🚀 Автоматизированный пайплайн для деплоя веб-приложения с использованием GitHub Actions, Docker
-                        и Nginx
+                        Этот сайт, Miki и HomeLab-дашборд: 10+ сервисов в Docker Compose за nginx, автодеплой из
+                        GitHub Actions / GitLab CI, wildcard SSL по DNS-01, мониторинг и Telegram-бот графика смен.
                     </p>
                     <div class="project-tech">
-                        <span class="tech-tag"><img src="../images/tech-icons/github-actions.svg"
-                                alt="GitHub Actions">GitHub Actions</span>
-                        <span class="tech-tag"><img src="../images/tech-icons/docker.svg" alt="Docker">Docker</span>
-                        <span class="tech-tag"><img src="../images/tech-icons/nginx.svg" alt="Nginx">Nginx</span>
+                        <span class="tech-tag"><img src="/images/tech-icons/docker.svg" alt="">Docker</span>
+                        <span class="tech-tag"><img src="/images/tech-icons/nginx.svg" alt="">Nginx</span>
+                        <span class="tech-tag"><img src="/images/tech-icons/github.svg" alt="" class="icon-invert">Actions</span>
+                        <span class="tech-tag"><img src="/images/tech-icons/prometheus.svg" alt="">Prometheus</span>
                     </div>
                     <div class="project-links">
-                        <a href="https://github.com/4pykella/cicd-pipeline" target="_blank"
-                            class="project-link code-link">
-                            <i class="fab fa-github"></i>
-                            <span>Source</span>
-                        </a>
-                        <a href="https://demo.chepykella.ru" target="_blank" class="project-link demo-link">
-                            <i class="fas fa-external-link-alt"></i>
-                            <span>Live Demo</span>
-                        </a>
+                        <a href="https://github.com/4pykella/PetWeb" target="_blank" rel="noopener noreferrer"
+                            class="project-link"><i class="fab fa-github"></i> Source</a>
                     </div>
-                </div>
+                </article>
 
-                <!-- Проект 2 
-                <div class="project-card terminal-glow">
+                <article class="project-card">
                     <div class="project-header">
                         <div class="project-title">
-                            <i class="fas fa-server project-icon"></i>
-                            <h3 class="neon-text">Dockerized App</h3>
+                            <i class="fas fa-robot project-icon"></i>
+                            <h3>TG-бот для университета</h3>
                         </div>
                         <span class="project-badge fullstack">FullStack</span>
                     </div>
                     <p class="project-description">
-                        🐳 Микросервисная архитектура с контейнеризацией, оркестрацией и балансировкой нагрузки
+                        Бронирование аудиторий, двухфакторная регистрация и выдача кодов авторизации Wi-Fi.
+                        Всё обёрнуто в Docker-контейнеры с автоматической выгрузкой на сервер.
                     </p>
                     <div class="project-tech">
-                        <span class="tech-tag"><img src="../images/tech-icons/docker.svg" alt="Docker">Docker</span>
-                        <span class="tech-tag"><img src="../images/tech-icons/nodejs.svg" alt="Node.js">Node.js</span>
-                        <span class="tech-tag"><img src="../images/tech-icons/mongodb.svg" alt="MongoDB">MongoDB</span>
+                        <span class="tech-tag"><img src="/images/tech-icons/docker.svg" alt="">Docker</span>
+                        <span class="tech-tag"><img src="/images/tech-icons/nodejs.svg" alt="">Node.js</span>
+                        <span class="tech-tag"><img src="/images/tech-icons/postgresql.svg" alt="">PostgreSQL</span>
                     </div>
-                    <div class="project-links">
-                        <a href="https://github.com/4pykella/docker-app" target="_blank" class="project-link code-link">
-                            <i class="fab fa-github"></i>
-                            <span>Source</span>
-                        </a>
-                    </div>
-                </div>
+                </article>
 
-                <!-- Проект 3 
-                <div class="project-card terminal-glow">
-                    <div class="project-header">
-                        <div class="project-title">
-                            <i class="fas fa-cloud project-icon"></i>
-                            <h3 class="neon-text">Cloud Infrastructure</h3>
-                        </div>
-                        <span class="project-badge cloud">Cloud</span>
-                    </div>
-                    <p class="project-description">
-                        ☁️ Автоматизация развертывания облачной инфраструктуры с резервным копированием и мониторингом
-                    </p>
-                    <div class="project-tech">
-                        <span class="tech-tag"><img src="../images/tech-icons/bash.svg" alt="Bash">Bash</span>
-                        <span class="tech-tag"><img src="../images/tech-icons/Selectel.svg"
-                                alt="Selectel">Selectel</span>
-                        <span class="tech-tag"><img src="../images/tech-icons/backup.svg" alt="Backup">Backup</span>
-                    </div>
-                    <div class="project-links">
-                        <a href="https://github.com/4pykella/iac-scripts" target="_blank"
-                            class="project-link code-link">
-                            <i class="fab fa-github"></i>
-                            <span>Source</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Проект 4 
-                <div class="project-card terminal-glow">
+                <article class="project-card">
                     <div class="project-header">
                         <div class="project-title">
                             <i class="fas fa-chart-line project-icon"></i>
-                            <h3 class="neon-text">Monitoring Stack</h3>
+                            <h3>Unispb</h3>
                         </div>
                         <span class="project-badge monitoring">Monitoring</span>
                     </div>
                     <p class="project-description">
-                        📊 Полный стек мониторинга с сбором метрик, визуализацией и автоматическими оповещениями
+                        Настройка сервера для лаборатории и внутренних процессов, перевод на новое сетевое
+                        оборудование и настройка мониторинга.
                     </p>
                     <div class="project-tech">
-                        <span class="tech-tag"><img src="../images/tech-icons/prometheus.svg"
-                                alt="Prometheus">Prometheus</span>
-                        <span class="tech-tag"><img src="../images/tech-icons/grafana.svg" alt="Grafana">Grafana</span>
-                        <span class="tech-tag"><img src="../images/tech-icons/alert.svg" alt="Alerting">Alerting</span>
+                        <span class="tech-tag"><img src="/images/tech-icons/docker.svg" alt="">Docker</span>
+                        <span class="tech-tag"><img src="/images/tech-icons/mikrotik.svg" alt="" class="icon-invert">MikroTik</span>
+                        <span class="tech-tag"><img src="/images/tech-icons/zabbix.svg" alt="">Zabbix</span>
+                    </div>
+                </article>
+
+                <article class="project-card">
+                    <div class="project-header">
+                        <div class="project-title">
+                            <i class="fas fa-dharmachakra project-icon"></i>
+                            <h3>HomeLab k8s</h3>
+                        </div>
+                        <span class="project-badge cloud">In progress</span>
+                    </div>
+                    <p class="project-description">
+                        Multi-node кластер Kubernetes на VM в Proxmox: kubeadm, MetalLB, Gateway API, NFS с TrueNAS,
+                        Argo CD и kube-prometheus-stack. Пошагово — в роадмапе Miki.
+                    </p>
+                    <div class="project-tech">
+                        <span class="tech-tag"><img src="/images/tech-icons/kubernets.svg" alt="">Kubernetes</span>
+                        <span class="tech-tag"><img src="/images/tech-icons/ansible.svg" alt="">Ansible</span>
+                        <span class="tech-tag"><i class="fa-solid fa-server"></i>Proxmox</span>
                     </div>
                     <div class="project-links">
-                        <a href="https://github.com/4pykella/monitoring-stack" target="_blank"
-                            class="project-link code-link">
-                            <i class="fab fa-github"></i>
-                            <span>Source</span>
-                        </a>
+                        <a href="/miki/index.html#docs/roadmap.md" class="project-link"><i
+                                class="fa-solid fa-map"></i> Roadmap</a>
                     </div>
-                </div>
-                -->
+                </article>
             </div>
         </section>
 
+        <!-- ===== CONTACT ===== -->
         <section id="contact" class="card">
-            <h2 class="gradient-text"><i class="fas fa-terminal"></i> connect.sh</h2>
+            <h2 class="section-title"><i class="fas fa-terminal"></i> connect.sh</h2>
             <div class="contact-buttons">
                 <a href="mailto:chepykella@yandex.ru" class="pulse-btn">
                     <i class="fas fa-envelope"></i> Email
                 </a>
-                <a href="/images/resume.pdf" download class="pulse-btn">
+                <a href="https://t.me/Chepykella" target="_blank" rel="noopener noreferrer" class="pulse-btn ghost">
+                    <i class="fab fa-telegram"></i> Telegram
+                </a>
+                <a href="/images/resume.pdf" download class="pulse-btn ghost">
                     <i class="fas fa-file-alt"></i> Резюме
                 </a>
             </div>
         </section>
+
+        <footer class="footer">
+            <span><i class="fa-solid fa-rocket"></i> задеплоено через CI/CD</span>
+            <span><i class="fa-solid fa-lock"></i> TLS: Let's Encrypt (DNS-01)</span>
+            <span><i class="fa-brands fa-docker"></i> Docker Compose</span>
+        </footer>
     </main>
 
     <script src="script.js"></script>

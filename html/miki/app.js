@@ -62,6 +62,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       const res = await fetch(path);
       const text = await res.text();
       content.innerHTML = marked.parse(text);
+      // id для заголовков — работают ссылки-оглавления вида [Шаг 1](#шаг-1-теория)
+      content.querySelectorAll("h1, h2, h3, h4").forEach(h => {
+        h.id = h.textContent.toLowerCase().trim()
+          .replace(/[^\p{L}\p{N}\s-]/gu, "").replace(/\s/g, "-");
+      });
+      if (window.hljs) content.querySelectorAll("pre code").forEach(b => hljs.highlightElement(b));
+      // внешние ссылки — в новой вкладке
+      content.querySelectorAll('a[href^="http"]').forEach(a => {
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+      });
+      if (location.hash !== "#" + path) history.replaceState(null, "", "#" + path);
+      content.scrollIntoView({ block: "start" });
     } catch (err) {
       content.innerHTML = `<p style="color:red">Ошибка загрузки: ${path}</p>`;
     }
@@ -79,8 +92,47 @@ document.addEventListener("DOMContentLoaded", async () => {
     ul.classList.add("open");
     firstFolder.classList.add("open");
   }
+  // ==== Открытие файла по пути (ссылки вида #docs/папка/файл.md) ====
+  function openPath(path) {
+    const link = [...nav.querySelectorAll("a[data-path]")].find(a => a.dataset.path === path);
+    nav.querySelectorAll("a.active").forEach(el => el.classList.remove("active"));
+    if (link) {
+      link.classList.add("active");
+      let parent = link.parentElement;
+      while (parent && parent.id !== "nav") {
+        if (parent.classList.contains("nested")) {
+          parent.classList.add("open");
+          if (parent.previousElementSibling) parent.previousElementSibling.classList.add("open");
+        }
+        parent = parent.parentElement;
+      }
+    }
+    loadFile(path);
+  }
+
+  content.addEventListener("click", (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    e.preventDefault();
+    const target = decodeURIComponent(a.getAttribute("href").slice(1));
+    if (target.startsWith("docs/")) {
+      openPath(target);
+    } else {
+      const el = document.getElementById(target);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+
+  window.addEventListener("hashchange", () => {
+    const path = decodeURIComponent(location.hash.slice(1));
+    if (path.startsWith("docs/")) openPath(path);
+  });
+
+  const initialPath = decodeURIComponent(location.hash.slice(1));
   const firstFile = nav.querySelector(".tree-item a");
-  if (firstFile) {
+  if (initialPath.startsWith("docs/")) {
+    openPath(initialPath);
+  } else if (firstFile) {
     firstFile.classList.add("active");
     loadFile(firstFile.dataset.path);
   }

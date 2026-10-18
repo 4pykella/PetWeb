@@ -1,0 +1,77 @@
+# GitLab CI/CD — аналог .github/workflows/github-actions.yaml
+# Переменные (Settings → CI/CD → Variables):
+#   SSH_PRIVATE_KEY  (File, Protected, Masked)  — приватный ключ деплоя
+#   SSH_HOST, SSH_USER, SSH_PORT (опц.)
+#   BOT_TOKEN, BOT_ADMIN_IDS, GRAFANA_ADMIN_PASSWORD, CODE_SERVER_PASSWORD
+#   ACME_EMAIL, ACME_DNS_PROVIDER, ACME_DNS_ENV (File) — ключи API DNS-провайдера
+# Подробности: html/miki/docs/GitLab/Гайд.md
+
+stages:
+  - build
+  - deploy
+
+variables:
+  DEPLOY_PATH: /opt/petweb
+  DOMAIN: chepykella.ru
+
+validate:
+  stage: build
+  image: node:20-alpine
+  script:
+    - node html/miki/generateFiles.js
+    - cd bot && npm ci --omit=dev && node --check index.js
+  artifacts:
+    paths:
+      - html/miki/files.json
+    expire_in: 1 day
+
+docker-build:
+  stage: build
+  image: docker:27
+  services:
+    - docker:27-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  script:
+    - touch .env
+    - docker compose config -q
+    - docker compose build --pull nginx workdays-bot
+
+deploy:
+  stage: deploy
+  image: alpine:3.20
+  needs: [validate, docker-build]
+  environment:
+    name: production
+    url: https://www.$DOMAIN
+  resource_group: production   # не даём двум деплоям идти параллельно
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  before_script:
+    - apk add --no-cache openssh-client tar
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - cp "$SSH_PRIVATE_KEY" ~/.ssh/id_deploy && chmod 600 ~/.ssh/id_deploy
+    - ssh-keyscan -p "${SSH_PORT:-22}" "$SSH_HOST" >> ~/.ssh/known_hosts
+    - printf 'Host deploy\n  HostName %s\n  Port %s\n  User %s\n  IdentityFile ~/.ssh/id_deploy\n  BatchMode yes\n' "$SSH_HOST" "${SSH_PORT:-22}" "$SSH_USER" > ~/.ssh/config
+  script:
+    - umask 077
+    - |
+      cat > .env <<EOF
+      DOMAIN=$DOMAIN
+      BOT_TOKEN=${BOT_TOKEN:-}
+      BOT_ADMIN_IDS=${BOT_ADMIN_IDS:-}
+      GRAFANA_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-}
+      CODE_SERVER_PASSWORD=${CODE_SERVER_PASSWORD:-}
+      ACME_EMAIL=${ACME_EMAIL:-}
+      ACME_DNS_PROVIDER=${ACME_DNS_PROVIDER:-}
+      EOF
+    - sed -i 's/^ *//' .env
+    - mkdir -p secrets
+    - if [ -n "${ACME_DNS_ENV:-}" ] && [ -f "$ACME_DNS_ENV" ]; then cp "$ACME_DNS_ENV" secrets/acme.env; else touch secrets/acme.env; fi
+    - tar --exclude='./.git' -czf /tmp/petweb.tar.gz .
+    - ssh deploy "mkdir -p '$DEPLOY_PATH'"
+    - scp /tmp/petweb.tar.gz deploy:/tmp/petweb.tar.gz
+    - ssh deploy "tar -xzf /tmp/petweb.tar.gz -C '$DEPLOY_PATH' && rm -f /tmp/petweb.tar.gz && chmod 600 '$DEPLOY_PATH/.env' '$DEPLOY_PATH/secrets/acme.env'"
+    - ssh deploy "bash '$DEPLOY_PATH/scripts/deploy.sh'"
+  after_script:
+    - rm -rf ~/.ssh .env secrets /tmp/petweb.tar.gz

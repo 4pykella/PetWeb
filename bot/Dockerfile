@@ -1,22 +1,21 @@
-# Используем официальный образ Node.js LTS
-FROM node:18-alpine
+# Официальный образ Node.js LTS
+FROM node:20-alpine
 
-# Устанавливаем рабочую директорию внутри контейнера
+ENV NODE_ENV=production
 WORKDIR /app
 
-# Копируем package.json и package-lock.json (если есть)
+# tzdata — чтобы TZ=Europe/Moscow корректно влиял на расчёт дат
+RUN apk add --no-cache tzdata
+
+# Сначала зависимости — так слой кэшируется между сборками
 COPY package*.json ./
+RUN npm ci --omit=dev && npm cache clean --force
 
-# Устанавливаем зависимости проекта
-RUN npm install
+COPY index.js ./
 
-# Копируем исходный код
-COPY . .
-
-# Создаём пользователя без прав root для безопасности
-RUN addgroup -g 1001 -S botuser && adduser -S botuser -u 1001 -G botuser
-RUN chown -R botuser:botuser /app
+# Пользователь без прав root; data/ — volume для vacations.json
+RUN addgroup -g 1001 -S botuser && adduser -S botuser -u 1001 -G botuser \
+    && mkdir -p /app/data && chown -R botuser:botuser /app
 USER botuser
 
-# Команда запуска
-CMD ["npm", "start"]
+CMD ["node", "index.js"]

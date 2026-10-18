@@ -2,6 +2,7 @@
   "1ntro": "docs/1ntro.md",
   "Git": "docs/Git.md",
   "GitLab": {
+    "Гайд": "docs/GitLab/Гайд.md",
     "Установка": "docs/GitLab/Установка.md"
   },
   "HomeLab": {
@@ -32,7 +33,7 @@
     },
     "Модель_OSI": "docs/Network/Модель_OSI.md"
   },
-  "Roadmap": "docs/Roadmap.md",
+  "roadmap": "docs/roadmap.md",
   "Telegram": "docs/Telegram.md",
   "Utilities": {
     "SSH": "docs/Utilities/SSH.md"
