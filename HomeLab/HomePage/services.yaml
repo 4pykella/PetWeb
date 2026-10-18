@@ -38,8 +38,8 @@
 
 - VDS:
     - WireguardSPB:
-        icon: prometheus.png
-        ping: 185.189.167.175:51822
+        icon: wireguard.png
+        ping: 185.189.167.175
     - WireguardKZ:
-        icon: prometheus.png
-        ping: 88.218.68.236:51840
+        icon: wireguard.png
+        ping: 88.218.68.236

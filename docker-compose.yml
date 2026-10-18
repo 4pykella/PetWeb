@@ -120,8 +120,10 @@ services:
       - PROXY_DOMAIN=code.chepykella.ru
     volumes:
       - ./code-server-config:/config
-    expose:
-      - "10443"
+    ports:
+      - 10443:8443
+    networks:            # <--- Добавили контейнер в общую сеть с Nginx
+      - monitoring
     restart: unless-stopped
 
 
