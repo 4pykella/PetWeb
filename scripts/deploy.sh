@@ -1,6 +1,6 @@
 #!/bin/bash
 # deploy.sh — запускается на сервере из CI/CD (GitHub Actions / GitLab CI).
-# Ожидает, что проект уже распакован в каталог деплоя, а .env и secrets/ положены рядом.
+# Ожидает, что проект уже распакован в каталог деплоя, а .env положен рядом.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -11,21 +11,16 @@ echo "======================================"
 echo " Deploying PetWeb → $(pwd)"
 echo "======================================"
 
-echo "[1/5] Validating docker compose..."
+echo "[1/4] Validating docker compose..."
 docker compose config -q
 
-echo "[2/5] SSL certificate (DNS-01)..."
-chmod +x ./cert.sh
-# cert.sh не роняет деплой: при ошибке остаётся старый / самоподписанный сертификат
-./cert.sh auto || echo "WARN: cert.sh failed, continue without new certificate"
-
-echo "[3/5] Building and starting containers..."
+echo "[2/4] Building and starting containers..."
 docker compose up -d --build --remove-orphans
 
-echo "[4/5] Cleaning dangling images..."
+echo "[3/4] Cleaning dangling images..."
 docker image prune -f >/dev/null || true
 
-echo "[5/5] Health check..."
+echo "[4/4] Health check..."
 sleep 15
 docker compose ps
 
@@ -46,9 +41,13 @@ for svc in $(docker compose ps --services); do
   fi
 done
 
-# Информация о сертификате
-docker exec nginx sh -c "openssl x509 -noout -subject -issuer -enddate \
-  -in /etc/letsencrypt/live/www.$DOMAIN/fullchain.pem" 2>/dev/null || true
+# Информация о сертификате (выпускается вручную: ./cert.sh)
+if [ -f "data/certbot/conf/renewal/www.$DOMAIN.conf" ]; then
+  docker exec nginx sh -c "openssl x509 -noout -subject -enddate \
+    -in /etc/letsencrypt/live/www.$DOMAIN/fullchain.pem" 2>/dev/null || true
+else
+  echo "WARN: сертификат самоподписанный — выпусти настоящий: ./cert.sh && docker compose restart nginx"
+fi
 
 if [ $failed -ne 0 ]; then
   docker compose logs --tail=100 nginx

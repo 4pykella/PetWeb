@@ -333,7 +333,7 @@ metadata: { name: lan, namespace: metallb-system }
 🛠 Задания:
 1. Установи MetalLB, получи `EXTERNAL-IP` у Service типа LoadBalancer, открой его с ПК.
 2. Установи Traefik (Helm) с включённым Gateway API, опубликуй `web` по имени `lab.chepykella.ru` через `HTTPRoute`.
-3. Установи cert-manager, выпусти wildcard-сертификат через DNS-01 (тот же DNS-провайдер, что в `cert.sh`).
+3. Установи cert-manager, выпусти wildcard-сертификат через DNS-01 (DNS домена — Selectel).
 4. Напиши NetworkPolicy «default deny» для `lab` и разреши трафик только от Traefik к `web`.
 
 ✅ Готово, когда: сервис из кластера открывается по HTTPS с валидным сертификатом, а лишний трафик режется политиками.

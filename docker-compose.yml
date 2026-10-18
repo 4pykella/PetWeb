@@ -29,17 +29,6 @@ services:
       - monitoring
     restart: unless-stopped
 
-  # Продление wildcard-сертификата по DNS-01 (выпуск — ./cert.sh, см. CI/CD).
-  # Данные/ключи API берутся из data/acme, куда их сохранил первый выпуск.
-  acme:
-    image: neilpang/acme.sh:latest
-    container_name: acme
-    command: daemon
-    volumes:
-      - ./data/acme:/acme.sh
-      - ./data/certbot/conf:/certs
-    restart: unless-stopped
-
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus

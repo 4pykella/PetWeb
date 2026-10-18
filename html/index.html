@@ -42,11 +42,11 @@
             <p class="subtitle terminal-text">$ Junior DevOps Engineer</p>
             <p class="hero-lead">
                 Строю инфраструктуру как код: от Docker Compose на VPS до кластера Kubernetes в домашней лаборатории
-                на Proxmox. Этот сайт — живой пример: он сам собирается, получает SSL и деплоится из git.
+                на Proxmox. Этот сайт — живой пример: он сам собирается и деплоится из git.
             </p>
             <div class="hero-badges">
                 <span class="badge"><i class="fa-brands fa-docker"></i> 10+ контейнеров</span>
-                <span class="badge"><i class="fa-solid fa-lock"></i> wildcard SSL</span>
+                <span class="badge"><i class="fa-solid fa-lock"></i> HTTPS</span>
                 <span class="badge"><i class="fa-solid fa-rocket"></i> CI/CD on push</span>
                 <span class="badge"><i class="fa-solid fa-chart-line"></i> мониторинг 24/7</span>
             </div>
@@ -69,7 +69,7 @@
                 <ul class="console-list">
                     <li>CI/CD: GitHub Actions и GitLab CI, автодеплой по SSH</li>
                     <li>Контейнеризации: Docker, Docker Compose, multi-stage сборки</li>
-                    <li>Веб-серверах: Nginx, reverse proxy, TLS (Let's Encrypt, DNS-01)</li>
+                    <li>Веб-серверах: Nginx, reverse proxy, TLS (Let's Encrypt)</li>
                     <li>Мониторинге: Prometheus, Grafana, Zabbix, экспортеры</li>
                     <li>Облаках и HomeLab: Selectel, Proxmox, TrueNAS, OpenWRT, MikroTik</li>
                     <li>Немного кода: Bash, JavaScript / Node.js, C#, C++</li>
@@ -101,9 +101,9 @@
                     <small>.env из секретов → сервер</small>
                 </li>
                 <li class="pipe-step">
-                    <i class="fa-solid fa-lock"></i>
-                    <strong>SSL DNS-01</strong>
-                    <small>acme.sh → *.chepykella.ru</small>
+                    <i class="fa-solid fa-box-archive"></i>
+                    <strong>upload</strong>
+                    <small>архив проекта → /opt/petweb</small>
                 </li>
                 <li class="pipe-step">
                     <i class="fa-brands fa-docker"></i>
@@ -125,7 +125,7 @@
                     <div class="tech-card"><img src="/images/tech-icons/nginx.svg" alt=""><span>Nginx</span><small>reverse proxy, TLS</small></div>
                     <div class="tech-card"><img src="/images/tech-icons/github.svg" alt="" class="icon-invert"><span>GitHub Actions</span><small>CI/CD</small></div>
                     <div class="tech-card"><i class="fa-brands fa-gitlab icon-gitlab"></i><span>GitLab CI</span><small>CI/CD, registry</small></div>
-                    <div class="tech-card"><img src="/images/tech-icons/letsencrypt.svg" alt=""><span>Let's Encrypt</span><small>acme.sh, DNS-01</small></div>
+                    <div class="tech-card"><img src="/images/tech-icons/letsencrypt.svg" alt=""><span>Let's Encrypt</span><small>сертификат *.chepykella.ru</small></div>
                     <div class="tech-card"><img src="/images/tech-icons/bash.svg" alt=""><span>Bash</span><small>скрипты деплоя</small></div>
                     <div class="tech-card"><img src="/images/tech-icons/Selectel.svg" alt=""><span>Selectel</span><small>VPS, DNS</small></div>
                     <div class="tech-card"><i class="fa-brands fa-linux icon-linux"></i><span>Linux</span><small>Ubuntu, systemd</small></div>
@@ -184,7 +184,7 @@
         <!-- ===== LIVE SERVICES ===== -->
         <section class="card">
             <h2 class="section-title"><i class="fa-solid fa-circle-nodes"></i> Запущено на сервере</h2>
-            <p class="section-lead">Живые сервисы этого стенда — всё за одним nginx и одним wildcard-сертификатом.</p>
+            <p class="section-lead">Живые сервисы этого стенда — всё за одним nginx с HTTPS.</p>
             <div class="services-grid">
                 <a href="https://home.chepykella.ru" class="service" target="_blank" rel="noopener noreferrer">
                     <i class="fa-solid fa-house-signal"></i><span>Homepage</span><small>home.chepykella.ru</small>
@@ -222,7 +222,7 @@
                     </div>
                     <p class="project-description">
                         Этот сайт, Miki и HomeLab-дашборд: 10+ сервисов в Docker Compose за nginx, автодеплой из
-                        GitHub Actions / GitLab CI, wildcard SSL по DNS-01, мониторинг и Telegram-бот графика смен.
+                        GitHub Actions / GitLab CI, HTTPS, мониторинг и Telegram-бот графика смен.
                     </p>
                     <div class="project-tech">
                         <span class="tech-tag"><img src="/images/tech-icons/docker.svg" alt="">Docker</span>
@@ -317,7 +317,7 @@
 
         <footer class="footer">
             <span><i class="fa-solid fa-rocket"></i> задеплоено через CI/CD</span>
-            <span><i class="fa-solid fa-lock"></i> TLS: Let's Encrypt (DNS-01)</span>
+            <span><i class="fa-solid fa-lock"></i> TLS: Let's Encrypt</span>
             <span><i class="fa-brands fa-docker"></i> Docker Compose</span>
         </footer>
     </main>

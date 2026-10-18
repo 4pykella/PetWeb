@@ -88,17 +88,14 @@ jobs:
           chmod 600 ~/.ssh/config
           ssh deploy "echo 'SSH connection successful'"
 
-      # .env и ключи DNS-провайдера собираются из секретов репозитория.
+      # .env собирается из секретов репозитория.
       # Пустые секреты → в compose сработают значения по умолчанию.
-      - name: Render .env and secrets
+      - name: Render .env
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           BOT_ADMIN_IDS: ${{ secrets.BOT_ADMIN_IDS }}
           GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
           CODE_SERVER_PASSWORD: ${{ secrets.CODE_SERVER_PASSWORD }}
-          ACME_EMAIL: ${{ secrets.ACME_EMAIL }}
-          ACME_DNS_PROVIDER: ${{ secrets.ACME_DNS_PROVIDER }}
-          ACME_DNS_ENV: ${{ secrets.ACME_DNS_ENV }}
           DOMAIN: ${{ vars.DOMAIN || 'chepykella.ru' }}
         run: |
           cd petweb
@@ -109,14 +106,7 @@ jobs:
             echo "BOT_ADMIN_IDS=$BOT_ADMIN_IDS"
             echo "GRAFANA_ADMIN_PASSWORD=$GRAFANA_ADMIN_PASSWORD"
             echo "CODE_SERVER_PASSWORD=$CODE_SERVER_PASSWORD"
-            echo "ACME_EMAIL=$ACME_EMAIL"
-            echo "ACME_DNS_PROVIDER=${ACME_DNS_PROVIDER:-dns_selectel}"
           } > .env
-          mkdir -p secrets
-          if [ -n "$ACME_DNS_ENV" ]; then printf '%s\n' "$ACME_DNS_ENV" > secrets/acme.env; else : > secrets/acme.env; fi
-          if [ -z "$ACME_DNS_ENV" ]; then
-            echo "::warning::ACME_DNS_ENV не задан — SSL выпускаться не будет, только выгрузка"
-          fi
 
       - name: Upload project
         run: |
@@ -124,11 +114,11 @@ jobs:
           ssh deploy "mkdir -p '${{ env.DEPLOY_PATH }}'"
           scp /tmp/petweb.tar.gz deploy:/tmp/petweb.tar.gz
           ssh deploy "tar -xzf /tmp/petweb.tar.gz -C '${{ env.DEPLOY_PATH }}' && rm -f /tmp/petweb.tar.gz \
-            && chmod 600 '${{ env.DEPLOY_PATH }}/.env' '${{ env.DEPLOY_PATH }}/secrets/acme.env'"
+            && chmod 600 '${{ env.DEPLOY_PATH }}/.env'"
 
       - name: Deploy
         run: ssh deploy "bash '${{ env.DEPLOY_PATH }}/scripts/deploy.sh'"
 
       - name: Cleanup SSH
         if: always()
-        run: rm -rf ~/.ssh /tmp/petweb.tar.gz petweb/.env petweb/secrets
+        run: rm -rf ~/.ssh /tmp/petweb.tar.gz petweb/.env

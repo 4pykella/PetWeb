@@ -3,7 +3,6 @@
 #   SSH_PRIVATE_KEY  (File, Protected, Masked)  — приватный ключ деплоя
 #   SSH_HOST, SSH_USER, SSH_PORT (опц.)
 #   BOT_TOKEN, BOT_ADMIN_IDS, GRAFANA_ADMIN_PASSWORD, CODE_SERVER_PASSWORD
-#   ACME_EMAIL, ACME_DNS_PROVIDER, ACME_DNS_ENV (File) — ключи API DNS-провайдера
 # Подробности: html/miki/docs/GitLab/Гайд.md
 
 stages:
@@ -62,16 +61,12 @@ deploy:
       BOT_ADMIN_IDS=${BOT_ADMIN_IDS:-}
       GRAFANA_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-}
       CODE_SERVER_PASSWORD=${CODE_SERVER_PASSWORD:-}
-      ACME_EMAIL=${ACME_EMAIL:-}
-      ACME_DNS_PROVIDER=${ACME_DNS_PROVIDER:-}
       EOF
     - sed -i 's/^ *//' .env
-    - mkdir -p secrets
-    - if [ -n "${ACME_DNS_ENV:-}" ] && [ -f "$ACME_DNS_ENV" ]; then cp "$ACME_DNS_ENV" secrets/acme.env; else touch secrets/acme.env; fi
     - tar --exclude='./.git' -czf /tmp/petweb.tar.gz .
     - ssh deploy "mkdir -p '$DEPLOY_PATH'"
     - scp /tmp/petweb.tar.gz deploy:/tmp/petweb.tar.gz
-    - ssh deploy "tar -xzf /tmp/petweb.tar.gz -C '$DEPLOY_PATH' && rm -f /tmp/petweb.tar.gz && chmod 600 '$DEPLOY_PATH/.env' '$DEPLOY_PATH/secrets/acme.env'"
+    - ssh deploy "tar -xzf /tmp/petweb.tar.gz -C '$DEPLOY_PATH' && rm -f /tmp/petweb.tar.gz && chmod 600 '$DEPLOY_PATH/.env'"
     - ssh deploy "bash '$DEPLOY_PATH/scripts/deploy.sh'"
   after_script:
-    - rm -rf ~/.ssh .env secrets /tmp/petweb.tar.gz
+    - rm -rf ~/.ssh .env /tmp/petweb.tar.gz

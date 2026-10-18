@@ -2,7 +2,7 @@
 
 [![CI/CD](https://github.com/4pykella/PetWeb/actions/workflows/github-actions.yaml/badge.svg)](https://github.com/4pykella/PetWeb/actions/workflows/github-actions.yaml)
 
-Сайт-визитка, личная вики (**Miki**), дашборд HomeLab и набор сервисов на одном сервере — всё в Docker Compose за nginx, с автодеплоем из git и wildcard-сертификатом Let's Encrypt по DNS.
+Сайт-визитка, личная вики (**Miki**), дашборд HomeLab и набор сервисов на одном сервере — всё в Docker Compose за nginx, с автодеплоем из git.
 
 🌐 https://www.chepykella.ru · 📖 [Miki](https://www.chepykella.ru/miki/) · 🏠 [Homepage](https://home.chepykella.ru)
 
@@ -15,7 +15,7 @@
 - [Технологии](#технологии)
 - [Структура репозитория](#структура-репозитория)
 - [CI/CD](#cicd)
-- [SSL по DNS](#ssl-по-dns)
+- [SSL](#ssl)
 - [Telegram-бот графика](#telegram-бот-графика)
 - [Miki](#miki)
 - [Локальный запуск](#локальный-запуск)
@@ -39,8 +39,7 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
                  │  validate → build images → files.json для Miki
                  ▼
               SSH deploy ──► /opt/petweb на сервере
-                 │  .env и ключи DNS из секретов
-                 │  cert.sh: acme.sh DNS-01 → *.chepykella.ru (при ошибке — деплой продолжается)
+                 │  .env из секретов
                  ▼
          docker compose up -d --build  +  health-check
 
@@ -52,7 +51,6 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
  │     │            ├─ code.*        ─► code-server                                 │
  │     │            ├─ /portainer    ─► Portainer                                   │
  │     │            └─ proxmox.* / truenas.* / openwrt.* ─► HomeLab по WireGuard/IP │
- │  acme (acme.sh daemon) — продление сертификата                                   │
  │  workdays-bot — Telegram-бот графика смен                                        │
  └──────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -66,7 +64,7 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
 | **Контейнеризация** | Docker, Docker Compose, multi-stage / non-root образы |
 | **Веб и прокси** | Nginx (reverse proxy, HTTP/2, TLS 1.2/1.3), статический HTML/CSS/JS |
 | **CI/CD** | GitHub Actions, GitLab CI (`.gitlab-ci.yml`), деплой по SSH, health-check |
-| **TLS** | Let's Encrypt, acme.sh, DNS-01, wildcard `*.chepykella.ru`, самоподписанный фолбэк |
+| **TLS** | Let's Encrypt (certbot, вручную), wildcard `*.chepykella.ru`, самоподписанный фолбэк |
 | **Мониторинг** | Prometheus, Grafana, Node Exporter, Nginx Prometheus Exporter |
 | **Сервисы** | Portainer, Homepage, code-server |
 | **Бот** | Node.js 20, node-telegram-bot-api |
@@ -84,7 +82,7 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
 ├── .github/workflows/github-actions.yaml  # CI/CD для GitHub
 ├── .gitlab-ci.yml                         # тот же пайплайн для GitLab
 ├── docker-compose.yml                     # все сервисы
-├── cert.sh                                # выпуск SSL по DNS-01 (auto / manual)
+├── cert.sh                                # ручной выпуск SSL (certbot)
 ├── scripts/deploy.sh                      # деплой на сервере + health-check
 ├── nginx/                                 # образ nginx, конфиг, entrypoint с фолбэком SSL
 ├── prometheus.yml                         # цели сбора метрик
@@ -103,8 +101,7 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
 Пайплайн запускается на push в `main` (и вручную через *Run workflow*). Для pull request выполняется только проверка.
 
 1. **Build & validate** — генерация `html/miki/files.json`, проверка синтаксиса бота и shell-скриптов, `docker compose config`, сборка образов `nginx` и `workdays-bot`.
-2. **Deploy** — `.env` и `secrets/acme.env` собираются из секретов, проект уходит архивом по SSH в `/opt/petweb`, затем на сервере запускается [`scripts/deploy.sh`](scripts/deploy.sh):
-   - `cert.sh auto` — выпуск/продление сертификата (никогда не роняет деплой);
+2. **Deploy** — `.env` собирается из секретов, проект уходит архивом по SSH в `/opt/petweb`, затем на сервере запускается [`scripts/deploy.sh`](scripts/deploy.sh):
    - `docker compose up -d --build --remove-orphans`;
    - проверка, что nginx запущен и отвечает по HTTPS; остальные сервисы — предупреждением.
 
@@ -120,9 +117,6 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
 | `BOT_ADMIN_IDS` | | Telegram ID, которым разрешено менять отпуска (через запятую) |
 | `GRAFANA_ADMIN_PASSWORD` | | пароль admin в Grafana |
 | `CODE_SERVER_PASSWORD` | | пароль code-server |
-| `ACME_EMAIL` | | почта для Let's Encrypt |
-| `ACME_DNS_PROVIDER` | | плагин acme.sh: `dns_selectel`, `dns_regru`, `dns_cf`, … |
-| `ACME_DNS_ENV` | | ключи API DNS-провайдера, построчно `KEY=VALUE` |
 
 Переменная репозитория `DOMAIN` (*Variables*) — по умолчанию `chepykella.ru`.
 
@@ -130,29 +124,19 @@ GitLab: тот же пайплайн в [`.gitlab-ci.yml`](.gitlab-ci.yml), на
 
 ---
 
-## SSL по DNS
+## SSL
 
-Сертификат выпускается через **DNS-01**, поэтому подходит для wildcard и не требует открытого 80 порта.
+Сертификат выпускается **вручную** на сервере — CI его не трогает:
 
 ```bash
-./cert.sh          # авто: acme.sh + API DNS-провайдера (используется в CI)
-./cert.sh manual   # вручную: certbot покажет TXT-записи, которые нужно добавить
+cd /opt/petweb
+./cert.sh                      # certbot покажет TXT-записи _acme-challenge — добавь их в DNS Selectel
+docker compose restart nginx   # подхватить новый сертификат
 ```
 
-Пример `secrets/acme.env` для Selectel (API v2):
+Выпускается wildcard `*.chepykella.ru` + `chepykella.ru` в `data/certbot/conf/live/www.chepykella.ru/`. Сертификат живёт 90 дней — повторяй до истечения.
 
-```
-SL_Ver=v2
-SL_Expire=60
-SL_Login_Name=dns-bot
-SL_Login_ID=123456
-SL_Project_Name=my-project
-SL_Pswd=********
-```
-
-Другие провайдеры: https://github.com/acmesh-official/acme.sh/wiki/dnsapi
-
-**Если выпустить не получилось** (нет ключей, ошибка API) — деплой всё равно продолжается: остаётся предыдущий сертификат, а при его отсутствии nginx при старте сгенерирует самоподписанный по тому же пути. Продление выполняет контейнер `acme` (acme.sh в режиме daemon), nginx перечитывает сертификат каждые 6 часов.
+Пока сертификата нет, nginx при старте генерирует самоподписанный по тому же пути, так что деплой и сайт работают (браузер покажет предупреждение).
 
 ---
 
@@ -207,7 +191,7 @@ cd PetWeb
 
 touch .env                            # или заполни переменными из таблицы выше
 node html/miki/generateFiles.js       # дерево Miki
-./cert.sh manual                      # опционально: настоящий сертификат вручную
+./cert.sh                             # опционально: настоящий сертификат вручную
 
 docker compose up -d --build
 ```
@@ -221,7 +205,7 @@ docker compose up -d --build
 
 - [x] Автодеплой через GitHub Actions
 - [x] Мониторинг сервера: Prometheus + Grafana + экспортеры
-- [x] Wildcard SSL по DNS-01 с фолбэком
+- [x] Wildcard SSL (выпуск вручную) с самоподписанным фолбэком
 - [x] Telegram-бот графика в общем compose
 - [x] GitLab CI
 - [ ] Алерты о неудачном деплое и инцидентах в Telegram
