@@ -9,6 +9,8 @@ if [ ! -f .env ]; then
   echo "ERROR: нет $(pwd)/.env — скопируй .env.example в .env и заполни пароли"
   exit 1
 fi
+# .env, отредактированный на Windows, может прийти с CRLF —  ломает значения
+sed -i 's/$//' .env
 set -a && . ./.env && set +a
 DOMAIN="${DOMAIN:-chepykella.ru}"
 
@@ -48,7 +50,7 @@ elif ! docker exec nginx wget -q --no-check-certificate -O /dev/null https://127
 fi
 
 # Остальные сервисы — только предупреждение, чтобы упавший бот не ломал сайт
-for svc in $(docker compose ps --services); do
+for svc in $(docker compose config --services); do
   state=$(docker compose ps --format '{{.State}}' "$svc" 2>/dev/null | head -1)
   if [ "$state" != "running" ]; then
     echo "WARN: service '$svc' state: ${state:-not created}"
