@@ -28,8 +28,8 @@ failed=0
 if [ "$(docker inspect -f '{{.State.Running}}' nginx 2>/dev/null)" != "true" ]; then
   echo "ERROR: nginx is not running"
   failed=1
-elif ! docker exec nginx wget -q --no-check-certificate -O /dev/null https://localhost/; then
-  echo "ERROR: https://localhost/ is not responding inside nginx"
+elif ! docker exec nginx wget -q --no-check-certificate -O /dev/null https://127.0.0.1/; then
+  echo "ERROR: https://127.0.0.1/ is not responding inside nginx"
   failed=1
 fi
 
