@@ -7,9 +7,10 @@ const TelegramBot = require('node-telegram-bot-api').default || require('node-te
 
 const TOKEN = process.env.TOKEN || process.env.BOT_TOKEN;
 if (!TOKEN) {
-    // exit(0): при restart: on-failure контейнер не уйдёт в бесконечный рестарт
+    // Не выходим: контейнер остаётся запущенным, но без heartbeat healthcheck покажет unhealthy
     console.error('❌ Токен не задан (переменная TOKEN / BOT_TOKEN) — бот не запущен');
-    process.exit(0);
+    setInterval(() => {}, 1 << 30);
+    return;
 }
 
 // ===== Конфигурация =====
@@ -138,7 +139,25 @@ function findNext(from, wantWork) {
 }
 
 // ===== Бот =====
-const bot = new TelegramBot(TOKEN, { polling: true });
+// ===== Сеть: прокси и альтернативный адрес API =====
+// Если api.telegram.org недоступен с сервера (блокировка), бот ходит через прокси:
+//   BOT_PROXY=socks5://user:pass@host:1080   или   http://host:3128
+// или через собственное зеркало API: TELEGRAM_API_URL=https://tg-proxy.example.com
+const BOT_PROXY = process.env.BOT_PROXY || '';
+const TELEGRAM_API_URL = process.env.TELEGRAM_API_URL || '';
+const botOptions = { polling: true, request: {} };
+if (BOT_PROXY) {
+    if (/^socks/i.test(BOT_PROXY)) {
+        const { SocksProxyAgent } = require('socks-proxy-agent');
+        botOptions.request.agent = new SocksProxyAgent(BOT_PROXY);
+    } else {
+        botOptions.request.proxy = BOT_PROXY;
+    }
+}
+if (TELEGRAM_API_URL) botOptions.baseApiUrl = TELEGRAM_API_URL.replace(/\/+$/, '');
+const proxyLabel = BOT_PROXY ? BOT_PROXY.replace(/\/\/[^@/]*@/, '//***@') : 'нет';
+
+const bot = new TelegramBot(TOKEN, botOptions);
 
 const HELP = [
     `🤖 Бот графика ${PERSON_TAG}`,
@@ -153,6 +172,7 @@ const HELP = [
     '/sun ГГГГ-ММ-ДД ГГГГ-ММ-ДД — добавить отпуск',
     '/delvacation N — удалить отпуск по номеру',
     '/clearvacations — удалить все отпуска',
+    '/health — состояние бота',
     '',
     `Упомяни ${PERSON_TAG} в чате — бот подскажет, работает ли он сейчас.`,
 ].join('\n');
@@ -325,10 +345,59 @@ bot.on('message', (msg) => {
     }
 });
 
-bot.on('polling_error', err => console.error('polling_error:', err.code, err.message));
+// ===== Здоровье: heartbeat для docker healthcheck и /health =====
+const HEARTBEAT_FILE = path.join(DATA_DIR, 'heartbeat');
+const startedAt = Date.now();
+const health = { lastOk: 0, lastError: '', errors: 0, username: '' };
+
+async function heartbeat() {
+    try {
+        const me = await bot.getMe();
+        health.username = me.username;
+        health.lastOk = Date.now();
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+        fs.writeFileSync(HEARTBEAT_FILE, String(health.lastOk));
+    } catch (err) {
+        noteError(err);
+    }
+}
+
+// Ошибки сети логируем не чаще раза в 5 минут, чтобы не засорять лог
+let lastErrorLog = 0;
+function noteError(err) {
+    health.errors++;
+    health.lastError = `${err.code || ''} ${err.message || err}`.trim();
+    if (Date.now() - lastErrorLog > 5 * 60 * 1000) {
+        lastErrorLog = Date.now();
+        console.error(`⚠️ Нет связи с Telegram API (${health.errors} ошибок): ${health.lastError}` +
+            (BOT_PROXY ? '' : ' — если api.telegram.org заблокирован, задай BOT_PROXY или TELEGRAM_API_URL'));
+    }
+}
+
+bot.on('polling_error', noteError);
+heartbeat();
+setInterval(heartbeat, 60 * 1000);
+
+function fmtAgo(ts) {
+    if (!ts) return 'никогда';
+    const s = Math.round((Date.now() - ts) / 1000);
+    return s < 60 ? `${s} с назад` : `${Math.round(s / 60)} мин назад`;
+}
+
+command('(?:health|ping)', msg => {
+    const up = Math.round((Date.now() - startedAt) / 60000);
+    bot.sendMessage(msg.chat.id, [
+        `🩺 @${health.username || '?'} работает ${up} мин`,
+        `Связь с Telegram: ${fmtAgo(health.lastOk)}`,
+        `Ошибок сети: ${health.errors}${health.lastError ? ` (последняя: ${health.lastError})` : ''}`,
+        `Прокси: ${proxyLabel}`,
+        `График: старт ${SCHEDULE_START}, цикл ${PATTERN.join(',')}`,
+        `Отпусков: ${vacations.length}`,
+    ].join('\n'));
+});
 
 process.on('SIGTERM', () => {
     bot.stopPolling().finally(() => process.exit(0));
 });
 
-console.log(`🤖 Бот запущен. Старт графика: ${SCHEDULE_START}, цикл: ${PATTERN.join(',')}`);
+console.log(`🤖 Бот запущен. Старт графика: ${SCHEDULE_START}, цикл: ${PATTERN.join(',')}, прокси: ${proxyLabel}`);

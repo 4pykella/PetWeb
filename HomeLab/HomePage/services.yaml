@@ -185,8 +185,9 @@
         ping: 94.19.145.226
     - Nextcloud:
         icon: nextcloud.png
-        href: https://home.chepykella.ru/nextcloud/
-        description: Своё облако
+        href: https://cloud.chepykella.ru/
+        description: cloud.chepykella.ru
+        siteMonitor: http://94.19.145.226:30027/status.php
 
 - VDS:
     - WireguardSPB:

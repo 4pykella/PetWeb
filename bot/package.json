@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "dotenv": "^16.0.3",
-    "node-telegram-bot-api": "^0.61.0"
+    "node-telegram-bot-api": "^0.61.0",
+    "socks-proxy-agent": "^8.0.5"
   }
 }
