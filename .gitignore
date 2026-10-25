@@ -8,3 +8,8 @@ bot/vacations.json
 # генерируются при деплое (scripts/regen.sh) и в CI
 html/miki/files.json
 html/music/playlist.json
+
+# мусор на сервере: логи Homepage, резервные копии .env (nano)
+HomeLab/HomePage/logs/
+.env.*
+!.env.example
