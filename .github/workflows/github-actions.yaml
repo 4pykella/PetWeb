@@ -63,16 +63,6 @@ jobs:
     environment: production
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          path: petweb
-
-      - name: Generate Miki tree and music playlist
-        run: |
-          node petweb/html/miki/generateFiles.js
-          node petweb/html/music/generatePlaylist.js
-
       - name: Configure SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -94,17 +84,15 @@ jobs:
           chmod 600 ~/.ssh/config
           ssh deploy "echo 'SSH connection successful'"
 
-      # .env с паролями лежит только на сервере (шаблон — .env.example) и не перезаписывается
-      - name: Upload project
-        run: |
-          tar -C petweb --exclude='./.git' --exclude='./.github' --exclude='./bot' --exclude='./wg-easy' -czf /tmp/petweb.tar.gz .
-          ssh deploy "mkdir -p '${{ env.DEPLOY_PATH }}'"
-          scp /tmp/petweb.tar.gz deploy:/tmp/petweb.tar.gz
-          ssh deploy "tar -xzf /tmp/petweb.tar.gz -C '${{ env.DEPLOY_PATH }}' && rm -f /tmp/petweb.tar.gz"
-
+      # /opt/petweb на сервере — git-клон. .env, data/ и музыка не в git, их обновление не трогает.
+      # Правки отслеживаемых файлов прямо на сервере перезаписываются версией из main.
       - name: Deploy
-        run: ssh deploy "bash '${{ env.DEPLOY_PATH }}/scripts/deploy.sh'"
+        run: >-
+          ssh deploy "cd '${{ env.DEPLOY_PATH }}'
+          && git fetch --prune origin main
+          && git reset --hard origin/main
+          && bash scripts/deploy.sh"
 
       - name: Cleanup SSH
         if: always()
-        run: rm -rf ~/.ssh /tmp/petweb.tar.gz
+        run: rm -rf ~/.ssh

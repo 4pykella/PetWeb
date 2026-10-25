@@ -110,7 +110,7 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
 Пайплайн запускается на push в `main` (и вручную через *Run workflow*). Для pull request выполняется только проверка.
 
 1. **Build & validate** — генерация `html/miki/files.json`, проверка синтаксиса бота и shell-скриптов, `docker compose config`, сборка образов (основной стек + проверка сборки бота).
-2. **Deploy** — проект уходит архивом по SSH в `/opt/petweb`, затем на сервере запускается [`scripts/deploy.sh`](scripts/deploy.sh). `.env` с паролями CI не трогает, он лежит только на сервере:
+2. **Deploy** — по SSH на сервере в `/opt/petweb` (git-клон `main`): `git fetch` + `git reset --hard origin/main`, затем [`scripts/deploy.sh`](scripts/deploy.sh). Вручную то же самое: `cd /opt/petweb && git pull && bash scripts/deploy.sh`. `.env` с паролями не в git, он лежит только на сервере:
    - `docker compose up -d --build --remove-orphans`;
    - проверка, что nginx запущен и отвечает по HTTPS; остальные сервисы — предупреждением.
 

@@ -5,3 +5,6 @@ code-server-config/
 node_modules/
 bot/vacations.json
 .claude
+# генерируются при деплое (scripts/regen.sh) и в CI
+html/miki/files.json
+html/music/playlist.json

@@ -1,7 +1,8 @@
 #!/bin/bash
-# deploy.sh — запускается на сервере из CI/CD (GitHub Actions / GitLab CI).
-# Ожидает, что проект уже распакован в каталог деплоя.
-# .env с паролями живёт ТОЛЬКО на сервере (шаблон — .env.example), CI его не трогает.
+# deploy.sh — применить текущую версию проекта на сервере.
+# /opt/petweb — git-клон репозитория. Обновление вручную:  git pull && bash scripts/deploy.sh
+# (CI делает то же самое: git fetch + reset --hard origin/main + этот скрипт).
+# .env с паролями живёт ТОЛЬКО на сервере (шаблон — .env.example), в git его нет.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -21,15 +22,23 @@ echo "======================================"
 echo "[1/4] Validating docker compose..."
 docker compose config -q
 
-# code-server работает от CODE_SERVER_UID — отдаём ему файлы проекта,
-# чтобы их можно было править прямо в браузере (data/ с сертификатами не трогаем)
+# Дерево Miki (files.json) и плейлист — генерируемые файлы, в git их нет
+bash scripts/regen.sh >/dev/null 2>&1 || echo "WARN: не удалось обновить files.json / playlist.json (scripts/regen.sh)"
+
+# code-server работает от CODE_SERVER_UID — отдаём ему файлы проекта (вместе с .git и самим
+# каталогом, чтобы git работал и в терминале code-server); data/ с сертификатами не трогаем
+OWNER="${CODE_SERVER_UID:-1000}:${CODE_SERVER_GID:-1000}"
+chown "$OWNER" . 2>/dev/null || true
 find . -mindepth 1 -maxdepth 1 ! -name data ! -name code-server-config \
-  -exec chown -R "${CODE_SERVER_UID:-1000}:${CODE_SERVER_GID:-1000}" {} + 2>/dev/null || true
+  -exec chown -R "$OWNER" {} + 2>/dev/null || true
 chmod 600 .env
+# root работает с репозиторием другого владельца — разрешаем явно
+git config --global --get-all safe.directory 2>/dev/null | grep -qx "$(pwd)" \
+  || git config --global --add safe.directory "$(pwd)"
 
 echo "[2/4] Building and starting containers..."
 docker compose up -d --build --remove-orphans
-# nginx.conf и prometheus.yml смонтированы отдельными файлами: распаковка архива заменяет
+# nginx.conf и prometheus.yml смонтированы отдельными файлами: git checkout заменяет
 # файл (новый inode), и запущенный контейнер видит старую версию — пересоздаём их
 docker compose up -d --no-deps --force-recreate nginx prometheus
 
