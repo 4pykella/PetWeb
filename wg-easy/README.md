@@ -71,5 +71,5 @@ ssh -L 51821:127.0.0.1:51821 root@<VDS>
 ## 6. Идеи на будущее
 
 - **Туннель сервер PetWeb ↔ дом.** Создай в wg-easy клиентов `archimedes` и `home-openwrt`; тогда nginx сможет проксировать proxmox/truenas по адресам внутри VPN, и пробросы портов 8006/8443 на домашнем роутере можно закрыть.
-- **Telegram-бот** на этом же VDS: Telegram оттуда доступен напрямую, прокси не нужен (см. `bot/README.md`).
+- **Telegram-бот** на этом же VDS: Telegram оттуда доступен напрямую, прокси не нужен.
 - Карточка wg-easy на Homepage: виджет `type: wgeasy` (https://gethomepage.dev/widgets/services/wgeasy/).

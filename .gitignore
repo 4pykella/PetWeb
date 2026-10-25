@@ -13,3 +13,6 @@ html/music/playlist.json
 HomeLab/HomePage/logs/
 .env.*
 !.env.example
+
+# Telegram-бот — отдельный проект, в этом репозитории не хранится (лежит только локально)
+bot/

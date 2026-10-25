@@ -21,7 +21,7 @@
 - [CI/CD](#cicd)
 - [Пароли и .env](#пароли-и-env)
 - [SSL](#ssl)
-- [Отдельные проекты: бот и wg-easy](#отдельные-проекты-бот-и-wg-easy)
+- [wg-easy (отдельный проект)](#wg-easy-отдельный-проект)
 - [Miki](#miki)
 - [Музыкальный плеер](#музыкальный-плеер)
 - [Локальный запуск](#локальный-запуск)
@@ -72,7 +72,6 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
 | **TLS** | Let's Encrypt (certbot, вручную), wildcard `*.chepykella.ru`, самоподписанный фолбэк |
 | **Мониторинг** | Prometheus, Grafana, Node Exporter, Nginx Prometheus Exporter |
 | **Сервисы** | Portainer, Homepage, code-server |
-| **Бот** (отдельно) | Node.js 20, node-telegram-bot-api — `bot/` |
 | **VPN** (отдельно) | WireGuard + wg-easy — `wg-easy/` |
 | **Miki** | HTML/CSS/JS, marked, highlight.js, генерация дерева `files.json` |
 | **HomeLab** | Proxmox VE, TrueNAS, Nextcloud, OpenWRT, MikroTik, WireGuard |
@@ -92,7 +91,6 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
 ├── scripts/deploy.sh                      # деплой на сервере + health-check
 ├── nginx/                                 # образ nginx, конфиг, entrypoint с фолбэком SSL
 ├── prometheus.yml                         # цели сбора метрик
-├── bot/                                   # Telegram-бот графика — отдельный проект, свой compose
 ├── wg-easy/                               # WireGuard с веб-UI для VDS — отдельный проект
 ├── HomeLab/HomePage/                      # конфиги дашборда Homepage
 └── html/
@@ -109,7 +107,7 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
 
 Пайплайн запускается на push в `main` (и вручную через *Run workflow*). Для pull request выполняется только проверка.
 
-1. **Build & validate** — генерация `html/miki/files.json`, проверка синтаксиса бота и shell-скриптов, `docker compose config`, сборка образов (основной стек + проверка сборки бота).
+1. **Build & validate** — генерация `html/miki/files.json`, проверка shell-скриптов, `docker compose config`, сборка образов.
 2. **Deploy** — по SSH на сервере в `/opt/petweb` (git-клон `main`): `git fetch` + `git reset --hard origin/main`, затем [`scripts/deploy.sh`](scripts/deploy.sh). Вручную то же самое: `cd /opt/petweb && git pull && bash scripts/deploy.sh`. `.env` с паролями не в git, он лежит только на сервере:
    - `docker compose up -d --build --remove-orphans`;
    - проверка, что nginx запущен и отвечает по HTTPS; остальные сервисы — предупреждением.
@@ -157,16 +155,11 @@ docker compose restart nginx   # подхватить новый сертифи�
 
 ---
 
-## Отдельные проекты: бот и wg-easy
+## wg-easy (отдельный проект)
 
-В репозитории лежат два проекта, которые **не входят** в основной стек и не выкладываются CI на сервер PetWeb. Каждая папка самодостаточна — её можно скопировать на любой хост:
+[`wg-easy/`](wg-easy/README.md) — WireGuard с веб-интерфейсом (wg-easy v15) для VDS, опционально HTTPS через Caddy. Не входит в основной стек и CI его не запускает: папку копируют на VDS, заполняют свой `.env` и делают `docker compose up -d`. Секреты wg-easy — только в `.env` на VDS.
 
-| Папка | Что это | Где запускать |
-|-------|---------|---------------|
-| [`bot/`](bot/README.md) | Telegram-бот графика смен: свой `docker-compose.yml`, `.env.example`, healthcheck, `/health` | хост с доступом к `api.telegram.org` (например, VDS) или через `BOT_PROXY` |
-| [`wg-easy/`](wg-easy/README.md) | WireGuard с веб-интерфейсом (wg-easy v15), опционально HTTPS через Caddy | VDS |
-
-Секреты бота и wg-easy — в их собственных `.env` на тех хостах, в основном `.env` их нет.
+Telegram-бот графика смен — тоже отдельный проект, но в этом репозитории он не хранится.
 
 ---
 
@@ -220,7 +213,6 @@ docker compose up -d --build
 - [x] Автодеплой через GitHub Actions
 - [x] Мониторинг сервера: Prometheus + Grafana + экспортеры
 - [x] Wildcard SSL (выпуск вручную) с самоподписанным фолбэком
-- [x] Telegram-бот графика — отдельный проект с healthcheck
 - [ ] wg-easy на VDS, туннель сервер ↔ дом
 - [x] GitLab CI
 - [ ] Алерты о неудачном деплое и инцидентах в Telegram

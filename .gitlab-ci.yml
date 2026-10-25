@@ -19,7 +19,6 @@ validate:
   script:
     - node html/miki/generateFiles.js
     - node html/music/generatePlaylist.js
-    - cd bot && npm ci --omit=dev && node --check index.js
 
 docker-build:
   stage: build
@@ -32,7 +31,6 @@ docker-build:
     - cp .env.example .env
     - docker compose config -q
     - docker compose build --pull
-    - docker build -t workdays-bot:ci ./bot   # бот — отдельный проект, только проверка сборки
 
 deploy:
   stage: deploy
