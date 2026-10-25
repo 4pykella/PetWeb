@@ -1,0 +1,10 @@
+{
+	email {$ACME_EMAIL}
+}
+
+# Веб-интерфейс wg-easy по HTTPS. Сертификат Let's Encrypt Caddy получает и продлевает сам
+# (нужны A-запись WG_UI_DOMAIN → IP VDS и открытые 80/443).
+{$WG_UI_DOMAIN} {
+	encode gzip
+	reverse_proxy wg-easy:51821
+}

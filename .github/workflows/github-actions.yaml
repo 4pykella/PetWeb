@@ -36,7 +36,7 @@ jobs:
           node html/miki/generateFiles.js
           node html/music/generatePlaylist.js
 
-      - name: Check bot syntax
+      - name: Check bot syntax (bot/ — отдельный проект, не деплоится)
         working-directory: bot
         run: |
           npm ci --omit=dev
@@ -51,7 +51,9 @@ jobs:
           docker compose config -q
 
       - name: Build Docker images
-        run: docker compose build --pull nginx workdays-bot
+        run: |
+          docker compose build --pull
+          docker build -t workdays-bot:ci ./bot   # бот — отдельный проект, только проверка сборки
 
   deploy:
     name: Deploy to server
@@ -95,7 +97,7 @@ jobs:
       # .env с паролями лежит только на сервере (шаблон — .env.example) и не перезаписывается
       - name: Upload project
         run: |
-          tar -C petweb --exclude='./.git' --exclude='./.github' -czf /tmp/petweb.tar.gz .
+          tar -C petweb --exclude='./.git' --exclude='./.github' --exclude='./bot' --exclude='./wg-easy' -czf /tmp/petweb.tar.gz .
           ssh deploy "mkdir -p '${{ env.DEPLOY_PATH }}'"
           scp /tmp/petweb.tar.gz deploy:/tmp/petweb.tar.gz
           ssh deploy "tar -xzf /tmp/petweb.tar.gz -C '${{ env.DEPLOY_PATH }}' && rm -f /tmp/petweb.tar.gz"

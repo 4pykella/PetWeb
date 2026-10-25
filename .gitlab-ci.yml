@@ -36,7 +36,8 @@ docker-build:
   script:
     - cp .env.example .env
     - docker compose config -q
-    - docker compose build --pull nginx workdays-bot
+    - docker compose build --pull
+    - docker build -t workdays-bot:ci ./bot   # бот — отдельный проект, только проверка сборки
 
 deploy:
   stage: deploy
@@ -55,7 +56,7 @@ deploy:
     - ssh-keyscan -p "${SSH_PORT:-22}" "$SSH_HOST" >> ~/.ssh/known_hosts
     - printf 'Host deploy\n  HostName %s\n  Port %s\n  User %s\n  IdentityFile ~/.ssh/id_deploy\n  BatchMode yes\n' "$SSH_HOST" "${SSH_PORT:-22}" "$SSH_USER" > ~/.ssh/config
   script:
-    - tar --exclude='./.git' -czf /tmp/petweb.tar.gz .
+    - tar --exclude='./.git' --exclude='./bot' --exclude='./wg-easy' -czf /tmp/petweb.tar.gz .
     - ssh deploy "mkdir -p '$DEPLOY_PATH'"
     - scp /tmp/petweb.tar.gz deploy:/tmp/petweb.tar.gz
     - ssh deploy "tar -xzf /tmp/petweb.tar.gz -C '$DEPLOY_PATH' && rm -f /tmp/petweb.tar.gz"

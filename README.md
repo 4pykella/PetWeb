@@ -21,7 +21,7 @@
 - [CI/CD](#cicd)
 - [Пароли и .env](#пароли-и-env)
 - [SSL](#ssl)
-- [Telegram-бот графика](#telegram-бот-графика)
+- [Отдельные проекты: бот и wg-easy](#отдельные-проекты-бот-и-wg-easy)
 - [Miki](#miki)
 - [Музыкальный плеер](#музыкальный-плеер)
 - [Локальный запуск](#локальный-запуск)
@@ -57,7 +57,6 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
  │     │            ├─ code.*        ─► code-server                                 │
  │     │            ├─ /portainer    ─► Portainer                                   │
  │     │            └─ proxmox.* / truenas.* / openwrt.* ─► HomeLab по WireGuard/IP │
- │  workdays-bot — Telegram-бот графика смен                                        │
  └──────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -73,7 +72,8 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
 | **TLS** | Let's Encrypt (certbot, вручную), wildcard `*.chepykella.ru`, самоподписанный фолбэк |
 | **Мониторинг** | Prometheus, Grafana, Node Exporter, Nginx Prometheus Exporter |
 | **Сервисы** | Portainer, Homepage, code-server |
-| **Бот** | Node.js 20, node-telegram-bot-api |
+| **Бот** (отдельно) | Node.js 20, node-telegram-bot-api — `bot/` |
+| **VPN** (отдельно) | WireGuard + wg-easy — `wg-easy/` |
 | **Miki** | HTML/CSS/JS, marked, highlight.js, генерация дерева `files.json` |
 | **HomeLab** | Proxmox VE, TrueNAS, Nextcloud, OpenWRT, MikroTik, WireGuard |
 | **Облако** | Selectel (VPS, DNS) |
@@ -92,7 +92,8 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
 ├── scripts/deploy.sh                      # деплой на сервере + health-check
 ├── nginx/                                 # образ nginx, конфиг, entrypoint с фолбэком SSL
 ├── prometheus.yml                         # цели сбора метрик
-├── bot/                                   # Telegram-бот графика рабочих дней
+├── bot/                                   # Telegram-бот графика — отдельный проект, свой compose
+├── wg-easy/                               # WireGuard с веб-UI для VDS — отдельный проект
 ├── HomeLab/HomePage/                      # конфиги дашборда Homepage
 └── html/
     ├── index.html, style.css, script.js   # сайт-визитка
@@ -108,7 +109,7 @@ PetWeb — мой пет-проект: сайт-визитка и замена O
 
 Пайплайн запускается на push в `main` (и вручную через *Run workflow*). Для pull request выполняется только проверка.
 
-1. **Build & validate** — генерация `html/miki/files.json`, проверка синтаксиса бота и shell-скриптов, `docker compose config`, сборка образов `nginx` и `workdays-bot`.
+1. **Build & validate** — генерация `html/miki/files.json`, проверка синтаксиса бота и shell-скриптов, `docker compose config`, сборка образов (основной стек + проверка сборки бота).
 2. **Deploy** — проект уходит архивом по SSH в `/opt/petweb`, затем на сервере запускается [`scripts/deploy.sh`](scripts/deploy.sh). `.env` с паролями CI не трогает, он лежит только на сервере:
    - `docker compose up -d --build --remove-orphans`;
    - проверка, что nginx запущен и отвечает по HTTPS; остальные сервисы — предупреждением.
@@ -130,7 +131,7 @@ GitLab: тот же пайплайн в [`.gitlab-ci.yml`](.gitlab-ci.yml), на
 
 ## Пароли и `.env`
 
-Все пароли и токены (Grafana, code-server, бот, ключи виджетов Homepage) лежат в `/opt/petweb/.env` **только на сервере**. В git есть шаблон [`.env.example`](.env.example) с описанием каждой переменной:
+Все пароли и токены (Grafana, code-server, ключи виджетов Homepage) лежат в `/opt/petweb/.env` **только на сервере**. В git есть шаблон [`.env.example`](.env.example) с описанием каждой переменной:
 
 ```bash
 cd /opt/petweb && cp .env.example .env && nano .env && chmod 600 .env && docker compose up -d
@@ -156,34 +157,16 @@ docker compose restart nginx   # подхватить новый сертифи�
 
 ---
 
-## Telegram-бот графика
+## Отдельные проекты: бот и wg-easy
 
-Сервис `workdays-bot` в `docker-compose.yml` показывает, работает ли человек в конкретный день по сменному графику.
+В репозитории лежат два проекта, которые **не входят** в основной стек и не выкладываются CI на сервер PetWeb. Каждая папка самодостаточна — её можно скопировать на любой хост:
 
-| Команда | Что делает |
-|---------|-----------|
-| `/today`, `/status` | статус на сегодня |
-| `/tomorrow` | статус на завтра |
-| `/week` | ближайшие 7 дней |
-| `/month [ГГГГ-ММ]` | график на месяц + число рабочих смен |
-| `/date ГГГГ-ММ-ДД` | статус на дату |
-| `/next` | ближайшая смена и ближайший выходной |
-| `/sun ГГГГ-ММ-ДД ГГГГ-ММ-ДД` | добавить отпуск |
-| `/vacations`, `/delvacation N`, `/clearvacations` | управление отпусками |
-| упоминание `@chepykella` | ответ «работает / выходной» |
+| Папка | Что это | Где запускать |
+|-------|---------|---------------|
+| [`bot/`](bot/README.md) | Telegram-бот графика смен: свой `docker-compose.yml`, `.env.example`, healthcheck, `/health` | хост с доступом к `api.telegram.org` (например, VDS) или через `BOT_PROXY` |
+| [`wg-easy/`](wg-easy/README.md) | WireGuard с веб-интерфейсом (wg-easy v15), опционально HTTPS через Caddy | VDS |
 
-Настройки (через `.env`):
-
-| Переменная | По умолчанию | |
-|------------|--------------|--|
-| `BOT_TOKEN` | — | без него бот не стартует (контейнер просто остановится) |
-| `SCHEDULE_START` | `2026-09-04` | первый день цикла |
-| `SCHEDULE_PATTERN` | `N,N,O,O,O,D,D,O` | цикл: `N` ночь, `D` день, `O` выходной |
-| `PERSON_TAG` | `@chepykella` | на чьё упоминание реагировать |
-| `BOT_ADMIN_IDS` | пусто (все) | кто может менять отпуска |
-| `TZ` | `Europe/Moscow` | часовой пояс расчёта дат |
-
-Отпуска хранятся в volume `bot_data` и переживают пересоздание контейнера.
+Секреты бота и wg-easy — в их собственных `.env` на тех хостах, в основном `.env` их нет.
 
 ---
 
@@ -237,7 +220,8 @@ docker compose up -d --build
 - [x] Автодеплой через GitHub Actions
 - [x] Мониторинг сервера: Prometheus + Grafana + экспортеры
 - [x] Wildcard SSL (выпуск вручную) с самоподписанным фолбэком
-- [x] Telegram-бот графика в общем compose
+- [x] Telegram-бот графика — отдельный проект с healthcheck
+- [ ] wg-easy на VDS, туннель сервер ↔ дом
 - [x] GitLab CI
 - [ ] Алерты о неудачном деплое и инцидентах в Telegram
 - [ ] Перенос PetWeb в Kubernetes — пошагово в [роадмапе](html/miki/docs/roadmap.md)

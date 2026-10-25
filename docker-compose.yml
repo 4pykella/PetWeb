@@ -127,34 +127,6 @@ services:
       - monitoring
     restart: unless-stopped
 
-  # Telegram-бот графика рабочих дней
-  workdays-bot:
-    build: ./bot
-    container_name: workdays-bot
-    environment:
-      - TOKEN=${BOT_TOKEN:-}
-      - TZ=${TZ:-Europe/Moscow}
-      - SCHEDULE_START=${SCHEDULE_START:-2026-09-04}
-      - SCHEDULE_PATTERN=${SCHEDULE_PATTERN:-N,N,O,O,O,D,D,O}
-      - PERSON_TAG=${PERSON_TAG:-@chepykella}
-      - ADMIN_IDS=${BOT_ADMIN_IDS:-}
-      - DATA_DIR=/app/data
-      # api.telegram.org может быть недоступен с сервера — тогда нужен прокси или зеркало API
-      - BOT_PROXY=${BOT_PROXY:-}
-      - TELEGRAM_API_URL=${TELEGRAM_API_URL:-}
-    volumes:
-      - bot_data:/app/data
-    networks:
-      - monitoring
-    # бот раз в минуту делает getMe и обновляет heartbeat; нет связи 3+ минуты → unhealthy
-    healthcheck:
-      test: ["CMD", "node", "-e", "process.exit(Date.now() - require('fs').statSync('/app/data/heartbeat').mtimeMs < 180000 ? 0 : 1)"]
-      interval: 60s
-      timeout: 10s
-      start_period: 90s
-      retries: 2
-    restart: unless-stopped
-
 networks:
   monitoring:
     driver: bridge
@@ -163,4 +135,3 @@ volumes:
   prometheus_data:
   grafana_data:
   portainer_data:
-  bot_data:

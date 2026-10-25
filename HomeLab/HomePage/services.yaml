@@ -150,11 +150,6 @@
         server: local
         container: code-server
         siteMonitor: http://code-server:8443/healthz
-    - Бот графика:
-        icon: telegram.png
-        description: Telegram — рабочие смены
-        server: local
-        container: workdays-bot
 
 - HomeLab:
     - Proxmox:

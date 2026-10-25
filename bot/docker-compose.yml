@@ -1,0 +1,31 @@
+# Telegram-бот графика рабочих смен — самостоятельный проект.
+# Разворачивается на любом хосте с Docker, независимо от PetWeb:
+#   cp .env.example .env && nano .env && docker compose up -d --build
+# Подробнее — README.md в этой папке.
+
+services:
+  workdays-bot:
+    build: .
+    image: workdays-bot:latest
+    container_name: workdays-bot
+    env_file: .env
+    environment:
+      - DATA_DIR=/app/data
+    volumes:
+      - bot_data:/app/data
+    # бот раз в минуту делает getMe и обновляет heartbeat; нет связи 3+ минуты → unhealthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "process.exit(Date.now() - require('fs').statSync('/app/data/heartbeat').mtimeMs < 180000 ? 0 : 1)"]
+      interval: 60s
+      timeout: 10s
+      start_period: 90s
+      retries: 2
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  bot_data:
