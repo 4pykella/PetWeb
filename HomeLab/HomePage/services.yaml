@@ -156,7 +156,7 @@
         icon: proxmox.png
         href: https://proxmox.chepykella.ru/
         description: Виртуализация
-        ping: 94.19.145.226
+        ping: 94.19.145.226:8006
         # Виджет: создай API-токен (Datacenter → Permissions → API Tokens, роль PVEAuditor),
         # впиши PROXMOX_API_USER (user@pam!token) и PROXMOX_API_TOKEN в .env и раскомментируй:
         # widget:
@@ -168,7 +168,7 @@
         icon: truenas.png
         href: https://truenas.chepykella.ru/
         description: NAS
-        ping: 94.19.145.226
+        ping: 94.19.145.226:8443
         # widget:
         #   type: truenas
         #   url: https://94.19.145.226:8443
@@ -187,9 +187,7 @@
 - VDS:
     - WireguardSPB:
         icon: wireguard.png
-        description: 185.189.167.175
         ping: 185.189.167.175
     - WireguardKZ:
         icon: wireguard.png
-        description: 88.218.68.236
         ping: 88.218.68.236

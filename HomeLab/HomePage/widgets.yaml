@@ -16,11 +16,6 @@
     uptime: true
     refresh: 3000
 
-- resources:
-    label: Диск
-    expanded: true
-    disk: /
-
 - datetime:
     text_size: md
     locale: ru
