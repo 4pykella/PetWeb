@@ -37,7 +37,7 @@
     tg-ws-proxy-git
     tg-ws-proxy-cli
 ```
-# Установка без AUR-helper
+#### Установка без AUR-helper
 ```bash
 git clone https://aur.archlinux.org/tg-ws-proxy-bin.git
 cd tg-ws-proxy-bin
