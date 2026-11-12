@@ -67,6 +67,9 @@ services:
       - portainer_data:/data
     networks:
       - monitoring
+    ports:
+      - 9000:9000
+      - 9443:9443
     restart: unless-stopped
 
   node-exporter:
